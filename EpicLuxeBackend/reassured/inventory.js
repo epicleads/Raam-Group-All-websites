@@ -62,31 +62,43 @@ async function generateUniqueSlug(brand, model, variant = "") {
 
 // Validate required fields & image presence
 function validateVehicleFields(body, files) {
+  console.log("🔍 Validating fields...");
+  console.log("📋 Body fields:", Object.keys(body));
+  console.log("📷 Files:", files ? files.length : 0);
+  
   const required = ["brand", "model", "year", "price"];
   for (const field of required) {
     if (!body[field] || body[field].toString().trim() === "") {
+      console.log(`❌ Required field missing: ${field}`);
       return `Field "${field}" is required and cannot be empty.`;
     }
   }
   
   if (isNaN(parseInt(body.year))) {
+    console.log(`❌ Invalid year: ${body.year}`);
     return 'Field "year" must be a valid number.';
   }
   if (isNaN(parseFloat(body.price))) {
+    console.log(`❌ Invalid price: ${body.price}`);
     return 'Field "price" must be a valid number.';
   }
   
   if (!files || files.length === 0) {
+    console.log("❌ No images provided");
     return "At least one image is required.";
   }
   
   // Validate boolean fields
   if (body.featured !== undefined && !["true", "false", true, false].includes(body.featured)) {
+    console.log(`❌ Invalid featured value: ${body.featured}`);
     return 'Field "featured" must be a boolean.';
   }
   if (body.published !== undefined && !["true", "false", true, false].includes(body.published)) {
+    console.log(`❌ Invalid published value: ${body.published}`);
     return 'Field "published" must be a boolean.';
   }
+  
+  console.log("✅ All validations passed");
   return null;
 }
 
@@ -113,14 +125,21 @@ async function enforceFeaturedLimit(featuredFlag, excludeVehicleId = null) {
 // POST /upload-reassured-vehicle: Create vehicle with images
 router.post("/upload-reassured-vehicle", upload.array("images", 20), async (req, res) => {
   try {
-    console.log("POST /upload-reassured-vehicle");
+    console.log("🚀 POST /upload-reassured-vehicle - RECEIVED REQUEST");
+    console.log("📝 Request body:", req.body);
+    console.log("📷 Files received:", req.files ? req.files.length : 0);
+    if (req.files && req.files.length > 0) {
+      console.log("📁 File details:", req.files.map(f => ({ name: f.originalname, size: f.size, mimetype: f.mimetype })));
+    }
 
     // Validate inputs
+    console.log("🔍 Starting validation...");
     const errorMsg = validateVehicleFields(req.body, req.files);
     if (errorMsg) {
-      console.log("Validation error:", errorMsg);
+      console.log("❌ Validation error:", errorMsg);
       return res.status(400).json({ success: false, error: errorMsg });
     }
+    console.log("✅ Validation passed!");
 
     // Parse and sanitize inputs
     const {
@@ -177,14 +196,19 @@ router.post("/upload-reassured-vehicle", upload.array("images", 20), async (req,
     }
 
     // Generate unique slug
+    console.log("🔗 Generating unique slug for:", brand, model, variant);
     const slug = await generateUniqueSlug(brand, model, variant);
+    console.log("✅ Generated slug:", slug);
 
     // Upload images to bucket first
+    console.log("📤 Starting image upload to Supabase...");
     const uploadedImageUrls = [];
     for (const [idx, file] of req.files.entries()) {
       const ext = file.originalname.split(".").pop();
       const filename = `${uuidv4()}.${ext}`;
       const path = `vehicle-${Date.now()}/${filename}`;
+      
+      console.log(`📷 Uploading image ${idx + 1}/${req.files.length}: ${filename}`);
 
       const { error: uploadErr } = await supabase.storage
         .from(BUCKET_NAME)
@@ -194,12 +218,13 @@ router.post("/upload-reassured-vehicle", upload.array("images", 20), async (req,
         });
 
       if (uploadErr) {
-        console.error("Image upload error:", uploadErr);
+        console.error("❌ Image upload error:", uploadErr);
         throw uploadErr;
       }
 
       const { data: urlData } = supabase.storage.from(BUCKET_NAME).getPublicUrl(path);
       uploadedImageUrls.push(urlData.publicUrl);
+      console.log(`✅ Image ${idx + 1} uploaded: ${urlData.publicUrl}`);
     }
 
     // Parse features_detailed if it's a string
@@ -216,6 +241,19 @@ router.post("/upload-reassured-vehicle", upload.array("images", 20), async (req,
     }
 
     // Insert vehicle record with image URLs
+    console.log("💾 Inserting vehicle record to database...");
+    console.log("📋 Vehicle data:", {
+      brand: brand.toString().trim(),
+      model: model.toString().trim(),
+      variant: variant ? variant.toString().trim() : null,
+      year: parseInt(year),
+      slug,
+      price: priceFloat,
+      published: isPublished,
+      featured: isFeatured,
+      imageCount: uploadedImageUrls.length
+    });
+    
     const { data: vehicle, error: vehicleInsertError } = await supabase
       .from("reassured-vehicles")
       .insert([
@@ -259,7 +297,7 @@ router.post("/upload-reassured-vehicle", upload.array("images", 20), async (req,
       .single();
 
     if (vehicleInsertError) {
-      console.error("Vehicle insert error:", vehicleInsertError);
+      console.error("❌ Vehicle insert error:", vehicleInsertError);
       if (vehicleInsertError.code === "23505" && vehicleInsertError.message.includes("slug")) {
         return res.status(409).json({
           success: false,
@@ -269,7 +307,7 @@ router.post("/upload-reassured-vehicle", upload.array("images", 20), async (req,
       throw vehicleInsertError;
     }
 
-    console.log("Vehicle upload successful");
+    console.log("🎉 Vehicle upload successful! ID:", vehicle.id);
 
     return res.status(201).json({
       success: true,
@@ -279,7 +317,8 @@ router.post("/upload-reassured-vehicle", upload.array("images", 20), async (req,
       image_urls: uploadedImageUrls,
     });
   } catch (error) {
-    console.error("Vehicle upload failed:", error);
+    console.error("💥 Vehicle upload failed:", error);
+    console.error("💥 Error stack:", error.stack);
     return res.status(500).json({
       success: false,
       error: error.message || "Internal server error",
@@ -290,6 +329,9 @@ router.post("/upload-reassured-vehicle", upload.array("images", 20), async (req,
 // GET all reassured vehicles
 router.get("/reassured-vehicles", async (req, res) => {
   try {
+    console.log("📋 GET /reassured-vehicles - Request received");
+    console.log("🔍 Query params:", req.query);
+    
     let query = supabase.from("reassured-vehicles").select("*").order("created_at", {
       ascending: false,
     });
@@ -306,10 +348,11 @@ router.get("/reassured-vehicles", async (req, res) => {
     const { data, error } = await query;
 
     if (error) {
-      console.error("Error fetching vehicles:", error);
+      console.error("❌ Error fetching vehicles:", error);
       throw error;
     }
 
+    console.log(`✅ Found ${data?.length || 0} vehicles in database`);
     return res.status(200).json({ success: true, vehicles: data });
   } catch (error) {
     console.error("Fetching vehicles failed:", error);
@@ -323,6 +366,7 @@ router.get("/reassured-vehicles", async (req, res) => {
 // GET vehicle by ID
 router.get("/reassured-vehicle/:id", async (req, res) => {
   try {
+    console.log("🔍 GET /reassured-vehicle/:id - Request for ID:", req.params.id);
     const vehicleId = req.params.id;
 
     const { data: vehicle, error: vehicleError } = await supabase
@@ -332,21 +376,24 @@ router.get("/reassured-vehicle/:id", async (req, res) => {
       .single();
 
     if (vehicleError) {
+      console.log("❌ Vehicle not found:", vehicleError);
       return res.status(404).json({
         success: false,
         error: "Vehicle not found",
       });
     }
 
+    console.log("✅ Vehicle found:", vehicle.brand, vehicle.model);
+
     // Increment views count
     await supabase
       .from("reassured-vehicles")
-      .update({ views: vehicle.views + 1 })
+      .update({ views: (vehicle.views || 0) + 1 })
       .eq("id", vehicleId);
 
     return res.status(200).json({
       success: true,
-      vehicle: { ...vehicle, views: vehicle.views + 1 },
+      vehicle: { ...vehicle, views: (vehicle.views || 0) + 1 },
     });
   } catch (error) {
     console.error("Fetching vehicle failed:", error);
