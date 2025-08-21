@@ -4,7 +4,12 @@ require("dotenv").config();
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    "http://localhost:3000",
+    "https://jade-stardust-498215.netlify.app"
+  ]
+}));
 app.use(express.json());
 
 // Mount your adminFormCode router
