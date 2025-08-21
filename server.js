@@ -13,6 +13,7 @@ const herosSectionAdmin = require("./EpicLuxeBackend/heroSectionAdmin");
 const adminBlogRoute = require("./EpicLuxeBackend/adminBlog");
 const heroReassuredBanner = require("./EpicLuxeBackend/reassured/heroBanner")
 const inventoryReassured = require("./EpicLuxeBackend/reassured/inventory");
+const reassured_leads = require("./EpicLuxeBackend/reassured/leads");
 
 const leadsRoute = require("./EpicLuxeBackend/Leads")
 app.use("/api", leadsRoute);
@@ -21,6 +22,7 @@ app.use("/admin", herosSectionAdmin);
 app.use("/admin", adminBlogRoute);
 app.use("/reassured", heroReassuredBanner);
 app.use("/reassured", inventoryReassured);
+app.use("/reassured", reassured_leads);
 
 // Simple health check endpoint
 app.get("/health", (req, res) => {
