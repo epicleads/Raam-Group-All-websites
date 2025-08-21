@@ -48,7 +48,7 @@ async function uploadVehicle() {
     });
 
     const response = await axios.post(
-  "http://localhost:5000/reassured/upload-vehicle",
+  "http://localhost:5000/admin/reassured-upload-vehicle",
   form,
   {
     headers: form.getHeaders(),
