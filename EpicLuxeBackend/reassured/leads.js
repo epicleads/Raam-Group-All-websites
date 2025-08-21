@@ -28,7 +28,7 @@ const leadSchema = Joi.object({
 
 
 // ✅ POST: Create a new lead
-router.post('/', async (req, res) => {
+router.post('/reassured-leads', async (req, res) => {
   try {
     // Validate request body
     const { error, value } = leadSchema.validate(req.body);
@@ -49,7 +49,7 @@ router.post('/', async (req, res) => {
 });
 
 // ✅ GET: Fetch all leads
-router.get('/',async (req, res) => {
+router.get('/reassured-leads',async (req, res) => {
   try {
     const { data, error } = await supabase
       .from('reassured_leads')

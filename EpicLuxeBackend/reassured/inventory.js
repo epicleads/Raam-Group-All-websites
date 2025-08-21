@@ -798,7 +798,7 @@ router.get("/reassured-vehicles/slugs", async (req, res) => {
 });
 
 // Test slug generation endpoint
-router.post("/test-slug", async (req, res) => {
+router.post("/reassured-test-slug", async (req, res) => {
   try {
     const { brand, model, variant } = req.body;
     
