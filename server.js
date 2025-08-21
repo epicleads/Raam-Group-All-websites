@@ -7,10 +7,20 @@ const app = express();
 app.use(cors({
   origin: [
     "http://localhost:3000",
-    "https://jade-stardust-498215.netlify.app"
+    "https://jade-stardust-498215.netlify.app",
+    "https://raam-group-all-websites.onrender.com"
   ]
 }));
 app.use(express.json());
+
+// Debug middleware to log all requests
+app.use((req, res, next) => {
+  console.log(`🌐 ${req.method} ${req.path} - ${new Date().toISOString()}`);
+  if (req.method === 'POST' && req.path.includes('reassured')) {
+    console.log('📦 POST Body keys:', Object.keys(req.body || {}));
+  }
+  next();
+});
 
 // Mount your adminFormCode router
 const adminFormRoute = require("./EpicLuxeBackend/adminFormCode");
