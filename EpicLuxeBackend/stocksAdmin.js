@@ -158,4 +158,34 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// GET unique brands from featured_cars table for dynamic filters
+router.get("/brands", async (req, res) => {
+  try {
+    console.log('[GET /admin/stocks/brands] Fetching unique brands');
+    const { data, error } = await supabase
+      .from("featured_cars")
+      .select("brand");
+
+    if (error) {
+      console.error("Error fetching featured car brands:", error);
+      throw error;
+    }
+
+    // Get unique brands
+    const uniqueBrands = [...new Set(data.map(car => car.brand))].filter(Boolean).sort();
+
+    console.log('[GET /admin/stocks/brands] Found brands:', uniqueBrands);
+    return res.status(200).json({
+      success: true,
+      brands: uniqueBrands
+    });
+  } catch (error) {
+    console.error("Fetching featured car brands failed:", error);
+    return res.status(500).json({
+      success: false,
+      error: error.message || "Internal server error",
+    });
+  }
+});
+
 module.exports = router;

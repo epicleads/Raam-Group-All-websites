@@ -916,5 +916,34 @@ router.post("/test-slug", async (req, res) => {
 
 // Also update your existing generateUniqueSlug function to handle edge cases better
 
+// GET unique brands from vehicles table for dynamic filters
+router.get("/vehicles/brands", async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("vehicles")
+      .select("brand")
+      .eq("published", true)
+      .order("brand");
+
+    if (error) {
+      console.error("Error fetching vehicle brands:", error);
+      throw error;
+    }
+
+    // Get unique brands
+    const uniqueBrands = [...new Set(data.map(vehicle => vehicle.brand))].filter(Boolean).sort();
+
+    return res.status(200).json({
+      success: true,
+      brands: uniqueBrands
+    });
+  } catch (error) {
+    console.error("Fetching vehicle brands failed:", error);
+    return res.status(500).json({
+      success: false,
+      error: error.message || "Internal server error",
+    });
+  }
+});
 
 module.exports = router;
