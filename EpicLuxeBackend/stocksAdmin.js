@@ -36,6 +36,8 @@ router.post('/', async (req, res) => {
       exterior_color,
       interior_color,
       is_featured,
+      vehicle_type,
+      body_type,
     } = req.body;
 
     const { data, error } = await supabase.from("featured_cars").insert([
@@ -65,6 +67,8 @@ router.post('/', async (req, res) => {
         exterior_color,
         interior_color,
         is_featured: is_featured || false,
+        vehicle_type: vehicle_type || null,
+        body_type: body_type || null,
         created_at: new Date().toISOString(),
       },
     ]);
