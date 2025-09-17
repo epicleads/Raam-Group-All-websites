@@ -171,6 +171,8 @@ router.post("/upload-reassured-vehicle", upload.array("images", 20), async (req,
       published,
       featured,
       features_detailed,
+      vehicle_type,
+      body_type,
     } = req.body;
 
     const priceFloat = parseFloat(price);
@@ -291,6 +293,8 @@ router.post("/upload-reassured-vehicle", upload.array("images", 20), async (req,
           image_urls: uploadedImageUrls,
           is_liked: false,
           views: 0,
+          vehicle_type: vehicle_type ? vehicle_type.toString().trim() : null,
+          body_type: body_type ? body_type.toString().trim() : null,
         },
       ])
       .select()
@@ -531,6 +535,8 @@ router.put("/reassured-vehicle/:id", upload.array("images", 20), async (req, res
       published,
       featured,
       features_detailed,
+      vehicle_type,
+      body_type,
     } = req.body;
 
     // Calculate savings
@@ -634,6 +640,8 @@ router.put("/reassured-vehicle/:id", upload.array("images", 20), async (req, res
       ...(featuresObj !== undefined ? { features_detailed: featuresObj } : {}),
       ...(newImageUrls.length > 0 ? { image_urls: newImageUrls } : {}),
       ...(newSlug ? { slug: newSlug } : {}),
+      ...(vehicle_type !== undefined ? { vehicle_type: vehicle_type ? vehicle_type.toString().trim() : null } : {}),
+      ...(body_type !== undefined ? { body_type: body_type ? body_type.toString().trim() : null } : {}),
     };
 
     if (parsedFeatured !== undefined) updateData.featured = parsedFeatured;
