@@ -165,6 +165,8 @@ router.post("/upload-vehicle", upload.array("images", 20), async (req, res) => {
       published,
       featured,
       features,
+      vehicle_type,
+      body_type,
     } = req.body;
 
     const priceFloat = parseFloat(price);
@@ -230,6 +232,8 @@ router.post("/upload-vehicle", upload.array("images", 20), async (req, res) => {
           published: isPublished,
           featured: isFeatured,
           slug,
+          vehicle_type: vehicle_type ? vehicle_type.toString().trim() : null,
+          body_type: body_type ? body_type.toString().trim() : null,
         },
       ])
       .select()
@@ -445,6 +449,8 @@ router.put("/vehicle/:id", upload.array("images", 20), async (req, res) => {
       published,
       featured,
       features,
+      vehicle_type,
+      body_type,
     } = req.body;
 
     // Calculate savings
@@ -509,6 +515,8 @@ router.put("/vehicle/:id", upload.array("images", 20), async (req, res) => {
       ...(color_interior ? { color_interior: color_interior.toString().trim() } : {}),
       ...(video_url ? { video_url: video_url.toString().trim() } : {}),
       slug,
+      ...(vehicle_type !== undefined ? { vehicle_type: vehicle_type ? vehicle_type.toString().trim() : null } : {}),
+      ...(body_type !== undefined ? { body_type: body_type ? body_type.toString().trim() : null } : {}),
     };
 
     if (parsedFeatured !== undefined) updateData.featured = parsedFeatured;

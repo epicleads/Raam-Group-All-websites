@@ -38,6 +38,7 @@ app.use((req, res, next) => {
 
 // Mount your routes
 const adminFormRoute = require("./EpicLuxeBackend/adminFormCode");
+const stocksAdmin = require("./EpicLuxeBackend/stocksAdmin");
 const herosSectionAdmin = require("./EpicLuxeBackend/heroSectionAdmin");
 const adminBlogRoute = require("./EpicLuxeBackend/adminBlog");
 const heroReassuredBanner = require("./EpicLuxeBackend/reassured/heroBanner");
@@ -59,7 +60,8 @@ app.use("/admin/leads", (req, res, next) => {
 });
 
 app.use("/admin", leadsRoute);
-app.use("/admin", adminFormRoute); 
+app.use("/admin", adminFormRoute);
+app.use("/admin/stocks", stocksAdmin);
 app.use("/admin", herosSectionAdmin);
 app.use("/admin", adminBlogRoute);
 app.use("/admin", heroReassuredBanner);
