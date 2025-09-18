@@ -49,6 +49,7 @@ const adsRoute = require("./raam-ather/ads");
 const landingPageBanner = require("./EpicToyota/LandingPageBanner");
 const mgRouter = require("./raam-mg/router");
 const mgLeadsRoute = require("./raam-mg/mg_leads");
+const sellNowRoutes = require("./EpicLuxeBackend/servicesRoutes/sellNowRoutes");
 
 // Add specific middleware for leads route to debug
 app.use("/admin/leads", (req, res, next) => {
@@ -62,6 +63,7 @@ app.use("/admin/leads", (req, res, next) => {
 app.use("/admin", leadsRoute);
 app.use("/admin", adminFormRoute);
 app.use("/admin/stocks", stocksAdmin);
+app.use("/admin", sellNowRoutes);
 app.use("/admin", herosSectionAdmin);
 app.use("/admin", adminBlogRoute);
 app.use("/admin", heroReassuredBanner);
