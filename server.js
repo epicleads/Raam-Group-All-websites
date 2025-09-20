@@ -18,6 +18,7 @@ app.use(cors({
     "https://epictoyota.netlify.app",
     "https://raamather.com",
      "http://localhost:3001",
+
   ]
 }));
 app.use(express.json());
@@ -50,6 +51,7 @@ const landingPageBanner = require("./EpicToyota/LandingPageBanner");
 const mgRouter = require("./raam-mg/router");
 const mgLeadsRoute = require("./raam-mg/mg_leads");
 const sellNowRoutes = require("./EpicLuxeBackend/servicesRoutes/sellNowRoutes");
+const brandData = require("./EpicLuxeBackend/reassured/brandData");
 
 // Add specific middleware for leads route to debug
 app.use("/admin/leads", (req, res, next) => {
@@ -73,6 +75,7 @@ app.use("/admin/ads", adsRoute);
 app.use("/admin/epic-toyota", landingPageBanner);
 app.use("/admin/raam-mg", mgRouter);
 app.use("/admin/raam-mg", mgLeadsRoute);
+app.use("/admin", brandData);
 
 // Simple health check endpoint
 app.get("/health", (req, res) => {
