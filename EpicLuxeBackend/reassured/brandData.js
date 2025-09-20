@@ -122,7 +122,6 @@ router.get('/brands', async (req, res) => {
     const { data, error } = await supabase
       .from('reassured_brand_data')
       .select('brand_name')
-      .eq('is_active', true)
       .order('brand_name');
 
     if (error) {
@@ -144,6 +143,81 @@ router.get('/brands', async (req, res) => {
 
   } catch (error) {
     console.error('Unexpected error in GET /brand-data/brands:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: error.message
+    });
+  }
+});
+
+// ✅ POST: Add a new brand (for dropdown)
+router.post('/brands', async (req, res) => {
+  try {
+    const { brand_name } = req.body;
+
+    if (!brand_name || brand_name.trim() === '') {
+      return res.status(400).json({
+        success: false,
+        message: 'Brand name is required'
+      });
+    }
+
+    // Check if brand already exists
+    const { data: existingBrand, error: checkError } = await supabase
+      .from('reassured_brand_data')
+      .select('brand_name')
+      .eq('brand_name', brand_name.trim())
+      .limit(1);
+
+    if (checkError) {
+      console.error('Error checking existing brand:', checkError);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to check existing brand',
+        error: checkError.message
+      });
+    }
+
+    if (existingBrand && existingBrand.length > 0) {
+      return res.status(409).json({
+        success: false,
+        message: 'Brand already exists'
+      });
+    }
+
+    // Add a placeholder entry for the brand (this will be replaced when actual data is added)
+    const { data, error } = await supabase
+      .from('reassured_brand_data')
+      .insert([{
+        brand_name: brand_name.trim(),
+        model_name: 'PLACEHOLDER_MODEL',
+        fuel_type: 'Petrol',
+        variant_name: 'PLACEHOLDER_VARIANT',
+        is_active: false // Mark as inactive until real data is added
+      }])
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error adding brand:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to add brand',
+        error: error.message
+      });
+    }
+
+    res.status(201).json({
+      success: true,
+      message: 'Brand added successfully',
+      data: {
+        brand_name: brand_name.trim()
+      }
+    });
+
+  } catch (error) {
+    console.error('Unexpected error in POST /brand-data/brands:', error);
     res.status(500).json({
       success: false,
       message: 'Internal server error',
