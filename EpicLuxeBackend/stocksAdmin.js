@@ -158,20 +158,21 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// GET unique brands from featured_cars table for dynamic filters
+// GET unique brands from vehicles table for dynamic filters
 router.get("/brands", async (req, res) => {
   try {
     console.log('[GET /admin/stocks/brands] Fetching unique brands');
     const { data, error } = await supabase
-      .from("featured_cars")
-      .select("brand");
+      .from("vehicles")
+      .select("brand")
+      .eq("published", true);
 
     if (error) {
-      console.error("Error fetching featured car brands:", error);
+      console.error("Error fetching vehicle brands:", error);
       throw error;
     }
 
-    // Get unique brands
+    // Get unique brands from 'brand' column
     const uniqueBrands = [...new Set(data.map(car => car.brand))].filter(Boolean).sort();
 
     console.log('[GET /admin/stocks/brands] Found brands:', uniqueBrands);
@@ -180,7 +181,52 @@ router.get("/brands", async (req, res) => {
       brands: uniqueBrands
     });
   } catch (error) {
-    console.error("Fetching featured car brands failed:", error);
+    console.error("Fetching vehicle brands failed:", error);
+    return res.status(500).json({
+      success: false,
+      error: error.message || "Internal server error",
+    });
+  }
+});
+
+// GET models by brand from vehicles table for dynamic filters
+router.get("/models-by-brand", async (req, res) => {
+  try {
+    console.log('[GET /admin/stocks/models-by-brand] Fetching models by brand');
+    const { data, error } = await supabase
+      .from("vehicles")
+      .select("brand, model")
+      .eq("published", true);
+
+    if (error) {
+      console.error("Error fetching models by brand:", error);
+      throw error;
+    }
+
+    // Group models by brand
+    const modelsByBrand = {};
+    data.forEach(car => {
+      if (car.brand && car.model) {
+        if (!modelsByBrand[car.brand]) {
+          modelsByBrand[car.brand] = new Set();
+        }
+        modelsByBrand[car.brand].add(car.model);
+      }
+    });
+
+    // Convert Sets to sorted arrays
+    const result = {};
+    Object.keys(modelsByBrand).forEach(brand => {
+      result[brand] = Array.from(modelsByBrand[brand]).sort();
+    });
+
+    console.log('[GET /admin/stocks/models-by-brand] Found models by brand:', result);
+    return res.status(200).json({
+      success: true,
+      modelsByBrand: result
+    });
+  } catch (error) {
+    console.error("Fetching models by brand failed:", error);
     return res.status(500).json({
       success: false,
       error: error.message || "Internal server error",
