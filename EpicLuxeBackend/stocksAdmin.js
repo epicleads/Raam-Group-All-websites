@@ -138,50 +138,151 @@ router.get('/', async (req, res) => {
   }
 });
 
-// =============== Get One Stock by ID ===============
-router.get('/:id', async (req, res) => {
-  console.log(`[GET /admin/stocks/${req.params.id}] Fetching stock by ID`);
-  try {
-    const { id } = req.params;
-    const { data, error } = await supabase
-      .from("featured_cars")
-      .select("*")
-      .eq("id", id)
-      .single();
-
-    if (error) throw error;
-    console.log(`[GET /admin/stocks/${req.params.id}] Fetched data:`, data);
-    res.status(200).json({ data });
-  } catch (error) {
-    console.error(`[GET /admin/stocks/${req.params.id}] Error:`, error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
 // GET unique brands from vehicles table for dynamic filters
+// IMPORTANT: This route MUST come before the /:id route to avoid conflicts
 router.get("/brands", async (req, res) => {
+  console.log('\n🔍 ============ BRANDS ENDPOINT DEBUG START ============');
+  console.log('[GET /admin/stocks/brands] Request received');
+  console.log('[GET /admin/stocks/brands] Headers:', JSON.stringify(req.headers, null, 2));
+  console.log('[GET /admin/stocks/brands] Query params:', req.query);
+  console.log('[GET /admin/stocks/brands] Supabase URL:', process.env.SUPABASE_URL ? 'SET' : 'NOT SET');
+  console.log('[GET /admin/stocks/brands] Supabase Key:', process.env.SUPABASE_SERVICE_KEY ? 'SET' : 'NOT SET');
+
   try {
-    console.log('[GET /admin/stocks/brands] Fetching unique brands');
+    console.log('[GET /admin/stocks/brands] Starting Supabase query...');
+
+    // First, let's check if the table exists and has data
+    const { count, error: countError } = await supabase
+      .from("vehicles")
+      .select("*", { count: 'exact', head: true });
+
+    console.log('[GET /admin/stocks/brands] Total vehicles count:', count);
+    if (countError) {
+      console.error('[GET /admin/stocks/brands] Count error:', countError);
+      throw countError;
+    }
+
+    // Now fetch the brands
+    console.log('[GET /admin/stocks/brands] Fetching unique brands...');
     const { data, error } = await supabase
       .from("vehicles")
       .select("brand")
       .eq("published", true);
 
+    console.log('[GET /admin/stocks/brands] Raw query result:');
+    console.log('  - Data:', data);
+    console.log('  - Error:', error);
+    console.log('  - Data length:', data ? data.length : 'null');
+
     if (error) {
-      console.error("Error fetching vehicle brands:", error);
+      console.error('[GET /admin/stocks/brands] Supabase error details:', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      });
       throw error;
     }
 
     // Get unique brands from 'brand' column
-    const uniqueBrands = [...new Set(data.map(car => car.brand))].filter(Boolean).sort();
+    console.log('[GET /admin/stocks/brands] Processing brands...');
+    const allBrands = data.map(car => car.brand);
+    console.log('[GET /admin/stocks/brands] All brands (raw):', allBrands);
 
-    console.log('[GET /admin/stocks/brands] Found brands:', uniqueBrands);
+    const filteredBrands = allBrands.filter(Boolean);
+    console.log('[GET /admin/stocks/brands] Filtered brands (non-empty):', filteredBrands);
+
+    const uniqueBrands = [...new Set(filteredBrands)].sort();
+    console.log('[GET /admin/stocks/brands] Unique brands (final):', uniqueBrands);
+
+    const response = {
+      success: true,
+      brands: uniqueBrands,
+      debug: {
+        totalVehicles: count,
+        publishedVehicles: data.length,
+        uniqueBrandCount: uniqueBrands.length
+      }
+    };
+
+    console.log('[GET /admin/stocks/brands] Sending response:', response);
+    console.log('🔍 ============ BRANDS ENDPOINT DEBUG END ============\n');
+
+    return res.status(200).json(response);
+  } catch (error) {
+    console.error('\n❌ ============ BRANDS ENDPOINT ERROR ============');
+    console.error('[GET /admin/stocks/brands] Error details:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name,
+      cause: error.cause
+    });
+    console.error('❌ ============ BRANDS ENDPOINT ERROR END ============\n');
+
+    return res.status(500).json({
+      success: false,
+      error: error.message || "Internal server error",
+      details: error.details || null,
+      hint: error.hint || null
+    });
+  }
+});
+
+// GET unique vehicle types from vehicles table for dynamic filters
+router.get("/vehicle-types", async (req, res) => {
+  try {
+    console.log('[GET /admin/stocks/vehicle-types] Fetching unique vehicle types');
+    const { data, error } = await supabase
+      .from("vehicles")
+      .select("vehicle_type")
+      .eq("published", true);
+
+    if (error) {
+      console.error("Error fetching vehicle types:", error);
+      throw error;
+    }
+
+    // Get unique vehicle types
+    const uniqueVehicleTypes = [...new Set(data.map(car => car.vehicle_type))].filter(Boolean).sort();
+
+    console.log('[GET /admin/stocks/vehicle-types] Found vehicle types:', uniqueVehicleTypes);
     return res.status(200).json({
       success: true,
-      brands: uniqueBrands
+      vehicleTypes: uniqueVehicleTypes
     });
   } catch (error) {
-    console.error("Fetching vehicle brands failed:", error);
+    console.error("Fetching vehicle types failed:", error);
+    return res.status(500).json({
+      success: false,
+      error: error.message || "Internal server error",
+    });
+  }
+});
+
+// GET unique body types from vehicles table for dynamic filters
+router.get("/body-types", async (req, res) => {
+  try {
+    console.log('[GET /admin/stocks/body-types] Fetching unique body types');
+    const { data, error } = await supabase
+      .from("vehicles")
+      .select("body_type")
+      .eq("published", true);
+
+    if (error) {
+      console.error("Error fetching body types:", error);
+      throw error;
+    }
+
+    // Get unique body types
+    const uniqueBodyTypes = [...new Set(data.map(car => car.body_type))].filter(Boolean).sort();
+
+    console.log('[GET /admin/stocks/body-types] Found body types:', uniqueBodyTypes);
+    return res.status(200).json({
+      success: true,
+      bodyTypes: uniqueBodyTypes
+    });
+  } catch (error) {
+    console.error("Fetching body types failed:", error);
     return res.status(500).json({
       success: false,
       error: error.message || "Internal server error",
@@ -231,6 +332,170 @@ router.get("/models-by-brand", async (req, res) => {
       success: false,
       error: error.message || "Internal server error",
     });
+  }
+});
+
+// GET unique interior colors from vehicles table for dynamic filters
+router.get("/interior-colors", async (req, res) => {
+  try {
+    console.log('[GET /admin/stocks/interior-colors] Fetching unique interior colors');
+    const { data, error } = await supabase
+      .from("vehicles")
+      .select("color_interior")
+      .eq("published", true);
+
+    if (error) {
+      console.error("Error fetching interior colors:", error);
+      throw error;
+    }
+
+    // Get unique interior colors
+    const uniqueInteriorColors = [...new Set(data.map(car => car.color_interior))].filter(Boolean).sort();
+
+    console.log('[GET /admin/stocks/interior-colors] Found interior colors:', uniqueInteriorColors);
+    return res.status(200).json({
+      success: true,
+      interiorColors: uniqueInteriorColors
+    });
+  } catch (error) {
+    console.error("Fetching interior colors failed:", error);
+    return res.status(500).json({
+      success: false,
+      error: error.message || "Internal server error",
+    });
+  }
+});
+
+// GET unique exterior colors from vehicles table for dynamic filters
+router.get("/exterior-colors", async (req, res) => {
+  try {
+    console.log('[GET /admin/stocks/exterior-colors] Fetching unique exterior colors');
+    const { data, error } = await supabase
+      .from("vehicles")
+      .select("color_exterior")
+      .eq("published", true);
+
+    if (error) {
+      console.error("Error fetching exterior colors:", error);
+      throw error;
+    }
+
+    // Get unique exterior colors
+    const uniqueExteriorColors = [...new Set(data.map(car => car.color_exterior))].filter(Boolean).sort();
+
+    console.log('[GET /admin/stocks/exterior-colors] Found exterior colors:', uniqueExteriorColors);
+    return res.status(200).json({
+      success: true,
+      exteriorColors: uniqueExteriorColors
+    });
+  } catch (error) {
+    console.error("Fetching exterior colors failed:", error);
+    return res.status(500).json({
+      success: false,
+      error: error.message || "Internal server error",
+    });
+  }
+});
+
+// GET unique locations from vehicles table for dynamic filters
+router.get("/locations", async (req, res) => {
+  try {
+    console.log('[GET /admin/stocks/locations] Fetching unique locations');
+    const { data, error } = await supabase
+      .from("vehicles")
+      .select("location")
+      .eq("published", true);
+
+    if (error) {
+      console.error("Error fetching locations:", error);
+      throw error;
+    }
+
+    // Get unique locations
+    const uniqueLocations = [...new Set(data.map(car => car.location))].filter(Boolean).sort();
+
+    console.log('[GET /admin/stocks/locations] Found locations:', uniqueLocations);
+    return res.status(200).json({
+      success: true,
+      locations: uniqueLocations
+    });
+  } catch (error) {
+    console.error("Fetching locations failed:", error);
+    return res.status(500).json({
+      success: false,
+      error: error.message || "Internal server error",
+    });
+  }
+});
+
+// GET all features from vehicles table for dynamic filters
+router.get("/features", async (req, res) => {
+  try {
+    console.log('[GET /admin/stocks/features] Fetching all features');
+
+    // First, get all vehicles with their features
+    const { data: vehicles, error } = await supabase
+      .from("vehicles")
+      .select(`
+        id,
+        vehicle_features (
+          feature
+        )
+      `)
+      .eq("published", true);
+
+    if (error) {
+      console.error("Error fetching features:", error);
+      throw error;
+    }
+
+    // Extract all features into a flat array
+    const allFeatures = new Set();
+    vehicles.forEach(vehicle => {
+      if (vehicle.vehicle_features && Array.isArray(vehicle.vehicle_features)) {
+        vehicle.vehicle_features.forEach(featureObj => {
+          if (featureObj.feature) {
+            allFeatures.add(featureObj.feature.trim());
+          }
+        });
+      }
+    });
+
+    // Convert Set to sorted array
+    const uniqueFeatures = Array.from(allFeatures).sort();
+
+    console.log('[GET /admin/stocks/features] Found features:', uniqueFeatures);
+    return res.status(200).json({
+      success: true,
+      features: uniqueFeatures
+    });
+  } catch (error) {
+    console.error("Fetching features failed:", error);
+    return res.status(500).json({
+      success: false,
+      error: error.message || "Internal server error",
+    });
+  }
+});
+
+// =============== Get One Stock by ID ===============
+// IMPORTANT: This route MUST come AFTER all specific routes (like /brands, /models-by-brand)
+router.get('/:id', async (req, res) => {
+  console.log(`[GET /admin/stocks/${req.params.id}] Fetching stock by ID`);
+  try {
+    const { id } = req.params;
+    const { data, error } = await supabase
+      .from("featured_cars")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    if (error) throw error;
+    console.log(`[GET /admin/stocks/${req.params.id}] Fetched data:`, data);
+    res.status(200).json({ data });
+  } catch (error) {
+    console.error(`[GET /admin/stocks/${req.params.id}] Error:`, error);
+    res.status(500).json({ error: error.message });
   }
 });
 
