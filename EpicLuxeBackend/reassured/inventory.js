@@ -501,6 +501,188 @@ router.get("/reassured-vehicles/published", async (req, res) => {
   }
 });
 
+// ---- FILTER ENDPOINTS FOR CASCADING DROPDOWNS ----
+// Get distinct brands
+router.get("/reassured-vehicles/filters/brands", async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("reassured-vehicles")
+      .select("brand, published")
+      .eq("published", true);
+
+    if (error) {
+      console.error("Error fetching brands:", error);
+      throw error;
+    }
+
+    const brands = Array.from(
+      new Set((data || []).map(v => (v.brand || "").trim()).filter(Boolean))
+    ).sort((a, b) => a.localeCompare(b));
+
+    return res.status(200).json({ success: true, brands });
+  } catch (error) {
+    console.error("Fetching brands failed:", error);
+    return res.status(500).json({ success: false, error: error.message || "Internal server error" });
+  }
+});
+
+// Get distinct models by brand
+router.get("/reassured-vehicles/filters/models", async (req, res) => {
+  try {
+    const { brand } = req.query;
+    if (!brand) {
+      return res.status(400).json({ success: false, error: "Query param 'brand' is required" });
+    }
+
+    const { data, error } = await supabase
+      .from("reassured-vehicles")
+      .select("model, brand, published")
+      .eq("published", true)
+      .ilike("brand", brand);
+
+    if (error) {
+      console.error("Error fetching models:", error);
+      throw error;
+    }
+
+    const models = Array.from(
+      new Set((data || []).map(v => (v.model || "").trim()).filter(Boolean))
+    ).sort((a, b) => a.localeCompare(b));
+
+    return res.status(200).json({ success: true, brand, models });
+  } catch (error) {
+    console.error("Fetching models failed:", error);
+    return res.status(500).json({ success: false, error: error.message || "Internal server error" });
+  }
+});
+
+// Get distinct variants by brand + model
+router.get("/reassured-vehicles/filters/variants", async (req, res) => {
+  try {
+    const { brand, model } = req.query;
+    if (!brand || !model) {
+      return res.status(400).json({ success: false, error: "Query params 'brand' and 'model' are required" });
+    }
+
+    const { data, error } = await supabase
+      .from("reassured-vehicles")
+      .select("variant, brand, model, published")
+      .eq("published", true)
+      .ilike("brand", brand)
+      .ilike("model", model);
+
+    if (error) {
+      console.error("Error fetching variants:", error);
+      throw error;
+    }
+
+    const variants = Array.from(
+      new Set((data || []).map(v => (v.variant || "").trim()).filter(Boolean))
+    ).sort((a, b) => a.localeCompare(b));
+
+    return res.status(200).json({ success: true, brand, model, variants });
+  } catch (error) {
+    console.error("Fetching variants failed:", error);
+    return res.status(500).json({ success: false, error: error.message || "Internal server error" });
+  }
+});
+
+// Get distinct vehicle types
+router.get("/reassured-vehicles/filters/vehicle-types", async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("reassured-vehicles")
+      .select("vehicle_type, published")
+      .eq("published", true);
+
+    if (error) {
+      console.error("Error fetching vehicle types:", error);
+      throw error;
+    }
+
+    const vehicle_types = Array.from(
+      new Set((data || []).map(v => (v.vehicle_type || "").trim()).filter(Boolean))
+    ).sort((a, b) => a.localeCompare(b));
+
+    return res.status(200).json({ success: true, vehicle_types });
+  } catch (error) {
+    console.error("Fetching vehicle types failed:", error);
+    return res.status(500).json({ success: false, error: error.message || "Internal server error" });
+  }
+});
+
+// Alias: vehicle_type (singular key and path)
+router.get("/reassured-vehicles/filters/vehicle_type", async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("reassured-vehicles")
+      .select("vehicle_type, published")
+      .eq("published", true);
+
+    if (error) {
+      console.error("Error fetching vehicle_type:", error);
+      throw error;
+    }
+
+    const vehicle_type = Array.from(
+      new Set((data || []).map(v => (v.vehicle_type || "").trim()).filter(Boolean))
+    ).sort((a, b) => a.localeCompare(b));
+
+    return res.status(200).json({ success: true, vehicle_type });
+  } catch (error) {
+    console.error("Fetching vehicle_type failed:", error);
+    return res.status(500).json({ success: false, error: error.message || "Internal server error" });
+  }
+});
+
+// Get distinct body types
+router.get("/reassured-vehicles/filters/body-types", async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("reassured-vehicles")
+      .select("body_type, published")
+      .eq("published", true);
+
+    if (error) {
+      console.error("Error fetching body types:", error);
+      throw error;
+    }
+
+    const body_types = Array.from(
+      new Set((data || []).map(v => (v.body_type || "").trim()).filter(Boolean))
+    ).sort((a, b) => a.localeCompare(b));
+
+    return res.status(200).json({ success: true, body_types });
+  } catch (error) {
+    console.error("Fetching body types failed:", error);
+    return res.status(500).json({ success: false, error: error.message || "Internal server error" });
+  }
+});
+
+// Get distinct transmissions
+router.get("/reassured-vehicles/filters/transmissions", async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("reassured-vehicles")
+      .select("transmission, published")
+      .eq("published", true);
+
+    if (error) {
+      console.error("Error fetching transmissions:", error);
+      throw error;
+    }
+
+    const transmissions = Array.from(
+      new Set((data || []).map(v => (v.transmission || "").trim()).filter(Boolean))
+    ).sort((a, b) => a.localeCompare(b));
+
+    return res.status(200).json({ success: true, transmissions });
+  } catch (error) {
+    console.error("Fetching transmissions failed:", error);
+    return res.status(500).json({ success: false, error: error.message || "Internal server error" });
+  }
+});
+
 // UPDATE vehicle by ID
 router.put("/reassured-vehicle/:id", upload.array("images", 20), async (req, res) => {
   try {
