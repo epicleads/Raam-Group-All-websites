@@ -17,8 +17,15 @@ app.use(cors({
     "http://epiccars.in", // HTTP version without www (if needed)
     "https://epictoyota.netlify.app",
     "https://raamather.com",
-     "http://localhost:3001",
-
+    "http://localhost:3001",
+    "https://www.raamhonda.com", // Raam Honda with www
+    "https://raamhonda.com", // Raam Honda without www
+    "http://www.raamhonda.com", // HTTP version with www
+    "http://raamhonda.com", // HTTP version without www
+    "https://www.raammg.com", // Raam MG with www
+    "https://raammg.com", // Raam MG without www
+    "http://www.raammg.com", // HTTP version with www
+    "http://raammg.com", // HTTP version without www
   ]
 }));
 app.use(express.json());
