@@ -83,7 +83,7 @@ app.use("/admin", reassured_leads);
 app.use("/admin/ads", adsRoute);
 app.use("/admin/epic-toyota", landingPageBanner);
 app.use("/admin/raam-mg", mgRouter);
-app.use("/admin/raam-mg", mgLeadsRoute);
+app.use("/admin/raam-mg/leads", mgLeadsRoute);
 app.use("/admin", brandData);
 app.use("/admin/raam-honda", heroBanner);
 app.use("/admin/raam-honda/leads", hondaLeadsRoute);
