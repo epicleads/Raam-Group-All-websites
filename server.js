@@ -26,6 +26,7 @@ app.use(cors({
     "https://raammg.com", // Raam MG without www
     "http://www.raammg.com", // HTTP version with www
     "http://raammg.com", // HTTP version without www
+    "https://raamgroupadmin.netlify.app",
   ]
 }));
 app.use(express.json());
