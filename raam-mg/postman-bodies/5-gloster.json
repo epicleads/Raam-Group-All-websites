@@ -1,0 +1,49 @@
+{
+  "model_name": "gloster",
+  "model_display_name": "MG Gloster",
+  "starting_price": "₹38.80 Lakh*",
+  "top_price": "₹43.87 Lakh*",
+  "variants": [
+    {
+      "name": "Super",
+      "price": "₹38.80 Lakh*",
+      "fuel": "Diesel",
+      "transmission": "8AT"
+    },
+    {
+      "name": "Smart",
+      "price": "₹40.83 Lakh*",
+      "fuel": "Diesel",
+      "transmission": "8AT"
+    },
+    {
+      "name": "Savvy",
+      "price": "₹42.91 Lakh*",
+      "fuel": "Diesel",
+      "transmission": "8AT"
+    },
+    {
+      "name": "Savvy 7S",
+      "price": "₹43.87 Lakh*",
+      "fuel": "Diesel",
+      "transmission": "8AT"
+    }
+  ],
+  "features": [
+    "Full-Size 7-Seater SUV",
+    "ADAS Level-2 Technology",
+    "Autonomous Level 1",
+    "Premium Luxury SUV",
+    "4WD Capability"
+  ],
+  "specifications": {
+    "engine": {
+      "diesel": "2.0L Twin-Turbo Diesel - 218 PS / 480 Nm"
+    },
+    "transmission": "8-Speed Automatic"
+  },
+  "is_active": true,
+  "display_order": 5,
+  "updated_by": "admin"
+}
+

@@ -1,0 +1,42 @@
+{
+  "model_name": "windsor",
+  "model_display_name": "MG Windsor EV",
+  "starting_price": "₹13.49 Lakh*",
+  "top_price": "₹15.49 Lakh*",
+  "variants": [
+    {
+      "name": "Excite",
+      "price": "₹13.49 Lakh*",
+      "fuel": "Electric",
+      "transmission": "Single Speed"
+    },
+    {
+      "name": "Exclusive",
+      "price": "₹14.49 Lakh*",
+      "fuel": "Electric",
+      "transmission": "Single Speed"
+    },
+    {
+      "name": "Essence",
+      "price": "₹15.49 Lakh*",
+      "fuel": "Electric",
+      "transmission": "Single Speed"
+    }
+  ],
+  "features": [
+    "331 km Range",
+    "38 kWh Battery Pack",
+    "Premium Electric Sedan",
+    "Zero Emission Luxury",
+    "Smart Connected Features"
+  ],
+  "specifications": {
+    "motor": "Electric Motor",
+    "battery": "38 kWh Lithium-ion Battery",
+    "range": "331 km"
+  },
+  "is_active": true,
+  "display_order": 4,
+  "updated_by": "admin"
+}
+

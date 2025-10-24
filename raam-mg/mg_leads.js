@@ -91,4 +91,35 @@ router.get('/', async (req, res) => {
   }
 });
 
+/**
+ * @route   DELETE /api/leads/:id
+ * @desc    Delete a lead by ID
+ * @param   id - Lead ID
+ */
+router.delete('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ error: 'Lead ID is required' });
+    }
+
+    const { error } = await supabase
+      .from('mg_leads')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('❌ Supabase delete error:', error.message);
+      return res.status(500).json({ error: 'Failed to delete lead' });
+    }
+
+    return res.json({ success: true, message: 'Lead deleted successfully' });
+
+  } catch (err) {
+    console.error('❌ Server error:', err.message);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 module.exports = router;

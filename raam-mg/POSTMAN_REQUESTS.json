@@ -1,0 +1,369 @@
+{
+  "postman_collection": "MG Models Pricing - Complete Setup",
+  "base_url_local": "http://localhost:5000/admin/raam-mg/models/pricing",
+  "base_url_production": "https://raam-group-all-websites.onrender.com/admin/raam-mg/models/pricing",
+  "instructions": "Copy each request body and POST to the endpoint above",
+  
+  "requests": [
+    {
+      "model": "MG Astor",
+      "method": "POST",
+      "endpoint": "/admin/raam-mg/models/pricing",
+      "body": {
+        "model_name": "astor",
+        "model_display_name": "MG Astor",
+        "starting_price": "₹9.99 Lakh*",
+        "top_price": "₹13.69 Lakh*",
+        "variants": [
+          {
+            "name": "Sprint",
+            "price": "₹9.99 Lakh*",
+            "fuel": "Petrol",
+            "transmission": "5MT"
+          },
+          {
+            "name": "Shine",
+            "price": "₹11.59 Lakh*",
+            "fuel": "Petrol",
+            "transmission": "5MT/8CVT"
+          },
+          {
+            "name": "Select",
+            "price": "₹12.69 Lakh*",
+            "fuel": "Petrol",
+            "transmission": "5MT/8CVT"
+          },
+          {
+            "name": "Sharp Pro",
+            "price": "₹13.69 Lakh*",
+            "fuel": "Petrol",
+            "transmission": "8CVT"
+          }
+        ],
+        "features": [
+          "Most Advanced SUV in its Class",
+          "India's First AI-Powered SUV",
+          "14 Autonomous Level-2 ADAS Features",
+          "Personal AI Assistant",
+          "25.7cm HD Touchscreen",
+          "Digital Instrument Cluster 17.78cm",
+          "6 Airbags with ESP",
+          "49 Standard Safety Features",
+          "Panoramic Skyroof",
+          "i-Smart 2.0 Technology"
+        ],
+        "specifications": {
+          "engine": {
+            "petrol": "VTi-TECH 1.5L - 110 PS / 144 Nm"
+          },
+          "transmission": "5MT / 8CVT",
+          "driveType": "Front Wheel Drive",
+          "fuelTank": "45 Litres",
+          "bootSpace": "448 Litres",
+          "seating": "5 Seater",
+          "groundClearance": "180 mm"
+        },
+        "is_active": true,
+        "display_order": 1,
+        "updated_by": "admin"
+      }
+    },
+    {
+      "model": "MG Comet EV",
+      "method": "POST",
+      "endpoint": "/admin/raam-mg/models/pricing",
+      "body": {
+        "model_name": "comet",
+        "model_display_name": "MG Comet EV",
+        "starting_price": "₹7.49 Lakh*",
+        "top_price": "₹10.85 Lakh*",
+        "variants": [
+          {
+            "name": "Pace",
+            "price": "₹7.98 Lakh*",
+            "fuel": "Electric",
+            "transmission": "Single Speed"
+          },
+          {
+            "name": "Play",
+            "price": "₹8.78 Lakh*",
+            "fuel": "Electric",
+            "transmission": "Single Speed"
+          },
+          {
+            "name": "Plush",
+            "price": "₹9.98 Lakh*",
+            "fuel": "Electric",
+            "transmission": "Single Speed"
+          },
+          {
+            "name": "Plush+",
+            "price": "₹10.85 Lakh*",
+            "fuel": "Electric",
+            "transmission": "Single Speed"
+          }
+        ],
+        "features": [
+          "India's Most Affordable Electric Car",
+          "17.3 kWh Battery Pack",
+          "230 km City Range",
+          "41 BHP Electric Motor",
+          "Compact 4-Seater Design",
+          "Zero Emission Mobility",
+          "Fast Charging (0-100% in 7 hours)",
+          "Smart Connectivity"
+        ],
+        "specifications": {
+          "motor": "41 BHP Permanent Magnet Synchronous Motor",
+          "battery": "17.3 kWh Lithium-ion Battery",
+          "range": "230 km (City Driving)",
+          "charging": "7.4kW AC: 7 hours (0-100%)",
+          "driveType": "Front Wheel Drive",
+          "seating": "4 Seater",
+          "groundClearance": "180 mm"
+        },
+        "is_active": true,
+        "display_order": 2,
+        "updated_by": "admin"
+      }
+    },
+    {
+      "model": "MG Hector",
+      "method": "POST",
+      "endpoint": "/admin/raam-mg/models/pricing",
+      "body": {
+        "model_name": "hector",
+        "model_display_name": "MG Hector",
+        "starting_price": "₹14.49 Lakh*",
+        "top_price": "₹21.42 Lakh*",
+        "variants": [
+          {
+            "name": "Style 6MT",
+            "price": "₹14.49 Lakh*",
+            "fuel": "Petrol",
+            "transmission": "Manual"
+          },
+          {
+            "name": "Shine 6MT/CVT",
+            "price": "₹16.99 Lakh*",
+            "fuel": "Petrol",
+            "transmission": "Manual/CVT"
+          },
+          {
+            "name": "Shine Pro 6MT/CVT",
+            "price": "₹17.43 Lakh*",
+            "fuel": "Petrol",
+            "transmission": "Manual/CVT"
+          },
+          {
+            "name": "Select Pro 6MT/CVT",
+            "price": "₹18.58 Lakh*",
+            "fuel": "Petrol",
+            "transmission": "Manual/CVT"
+          },
+          {
+            "name": "Smart Pro 6MT/CVT",
+            "price": "₹19.57 Lakh*",
+            "fuel": "Petrol",
+            "transmission": "Manual/CVT"
+          },
+          {
+            "name": "Sharp Pro 6MT/CVT",
+            "price": "₹21.14 Lakh*",
+            "fuel": "Petrol",
+            "transmission": "Manual/CVT"
+          },
+          {
+            "name": "Savvy Pro CVT",
+            "price": "₹21.42 Lakh*",
+            "fuel": "Petrol",
+            "transmission": "CVT"
+          }
+        ],
+        "features": [
+          "70+ Connected Car Features",
+          "ADAS Level-2 Autonomous Technology",
+          "Voice Command Control (100+ commands)",
+          "360° HD Camera System",
+          "Panoramic Sunroof",
+          "6 Airbags with ESP",
+          "Premium Infinity Audio System",
+          "Wireless Phone Charger"
+        ],
+        "specifications": {
+          "engine": {
+            "petrol": "1.5L Turbo Petrol - 143 PS / 250 Nm",
+            "diesel": "2.0L Diesel Turbo - 170 PS / 350 Nm"
+          },
+          "transmission": "6-Speed Manual / CVT Automatic",
+          "driveType": "Front Wheel Drive",
+          "fuelTank": "60 Litres",
+          "bootSpace": "463 Litres",
+          "seating": "5 Seater",
+          "groundClearance": "192 mm"
+        },
+        "is_active": true,
+        "display_order": 3,
+        "updated_by": "admin"
+      }
+    },
+    {
+      "model": "MG Windsor EV",
+      "method": "POST",
+      "endpoint": "/admin/raam-mg/models/pricing",
+      "body": {
+        "model_name": "windsor",
+        "model_display_name": "MG Windsor EV",
+        "starting_price": "₹13.49 Lakh*",
+        "top_price": "₹15.49 Lakh*",
+        "variants": [
+          {
+            "name": "Excite",
+            "price": "₹13.49 Lakh*",
+            "fuel": "Electric",
+            "transmission": "Single Speed"
+          },
+          {
+            "name": "Exclusive",
+            "price": "₹14.49 Lakh*",
+            "fuel": "Electric",
+            "transmission": "Single Speed"
+          },
+          {
+            "name": "Essence",
+            "price": "₹15.49 Lakh*",
+            "fuel": "Electric",
+            "transmission": "Single Speed"
+          }
+        ],
+        "features": [
+          "331 km Range",
+          "38 kWh Battery Pack",
+          "Premium Electric Sedan",
+          "Zero Emission Luxury",
+          "Smart Connected Features",
+          "Fast Charging Support"
+        ],
+        "specifications": {
+          "motor": "Electric Motor",
+          "battery": "38 kWh Lithium-ion Battery",
+          "range": "331 km",
+          "charging": "Fast Charging Available",
+          "driveType": "Front Wheel Drive",
+          "seating": "5 Seater"
+        },
+        "is_active": true,
+        "display_order": 4,
+        "updated_by": "admin"
+      }
+    },
+    {
+      "model": "MG Gloster",
+      "method": "POST",
+      "endpoint": "/admin/raam-mg/models/pricing",
+      "body": {
+        "model_name": "gloster",
+        "model_display_name": "MG Gloster",
+        "starting_price": "₹38.80 Lakh*",
+        "top_price": "₹43.87 Lakh*",
+        "variants": [
+          {
+            "name": "Super",
+            "price": "₹38.80 Lakh*",
+            "fuel": "Diesel",
+            "transmission": "8AT"
+          },
+          {
+            "name": "Smart",
+            "price": "₹40.83 Lakh*",
+            "fuel": "Diesel",
+            "transmission": "8AT"
+          },
+          {
+            "name": "Savvy",
+            "price": "₹42.91 Lakh*",
+            "fuel": "Diesel",
+            "transmission": "8AT"
+          },
+          {
+            "name": "Savvy 7S",
+            "price": "₹43.87 Lakh*",
+            "fuel": "Diesel",
+            "transmission": "8AT"
+          }
+        ],
+        "features": [
+          "Full-Size 7-Seater SUV",
+          "ADAS Level-2 Technology",
+          "Autonomous Level 1",
+          "Premium Luxury SUV",
+          "4WD Capability",
+          "360° Camera System"
+        ],
+        "specifications": {
+          "engine": {
+            "diesel": "2.0L Twin-Turbo Diesel - 218 PS / 480 Nm"
+          },
+          "transmission": "8-Speed Automatic",
+          "driveType": "4WD Available",
+          "seating": "6/7 Seater",
+          "groundClearance": "210 mm"
+        },
+        "is_active": true,
+        "display_order": 5,
+        "updated_by": "admin"
+      }
+    },
+    {
+      "model": "MG ZS EV",
+      "method": "POST",
+      "endpoint": "/admin/raam-mg/models/pricing",
+      "body": {
+        "model_name": "zsev",
+        "model_display_name": "MG ZS EV",
+        "starting_price": "₹18.98 Lakh*",
+        "top_price": "₹25.88 Lakh*",
+        "variants": [
+          {
+            "name": "Excite",
+            "price": "₹18.98 Lakh*",
+            "fuel": "Electric",
+            "transmission": "Single Speed"
+          },
+          {
+            "name": "Exclusive",
+            "price": "₹21.98 Lakh*",
+            "fuel": "Electric",
+            "transmission": "Single Speed"
+          },
+          {
+            "name": "Essence",
+            "price": "₹25.88 Lakh*",
+            "fuel": "Electric",
+            "transmission": "Single Speed"
+          }
+        ],
+        "features": [
+          "461 km Range",
+          "50.3 kWh Battery",
+          "Premium Electric SUV",
+          "Zero Emission",
+          "Advanced Connected Features",
+          "Fast Charging Support"
+        ],
+        "specifications": {
+          "motor": "Electric Motor - 176 PS / 280 Nm",
+          "battery": "50.3 kWh Lithium-ion Battery",
+          "range": "461 km",
+          "charging": "DC Fast Charging: 50 minutes (0-80%)",
+          "driveType": "Front Wheel Drive",
+          "seating": "5 Seater"
+        },
+        "is_active": true,
+        "display_order": 6,
+        "updated_by": "admin"
+      }
+    }
+  ]
+}
+

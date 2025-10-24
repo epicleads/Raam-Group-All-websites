@@ -1,0 +1,62 @@
+{
+  "model_name": "hector",
+  "model_display_name": "MG Hector",
+  "starting_price": "₹14.49 Lakh*",
+  "top_price": "₹21.42 Lakh*",
+  "variants": [
+    {
+      "name": "Style 6MT",
+      "price": "₹14.49 Lakh*",
+      "fuel": "Petrol",
+      "transmission": "Manual"
+    },
+    {
+      "name": "Shine 6MT/CVT",
+      "price": "₹16.99 Lakh*",
+      "fuel": "Petrol",
+      "transmission": "Manual/CVT"
+    },
+    {
+      "name": "Shine Pro 6MT/CVT",
+      "price": "₹17.43 Lakh*",
+      "fuel": "Petrol",
+      "transmission": "Manual/CVT"
+    },
+    {
+      "name": "Select Pro 6MT/CVT",
+      "price": "₹18.58 Lakh*",
+      "fuel": "Petrol",
+      "transmission": "Manual/CVT"
+    },
+    {
+      "name": "Smart Pro 6MT/CVT",
+      "price": "₹19.57 Lakh*",
+      "fuel": "Petrol",
+      "transmission": "Manual/CVT"
+    },
+    {
+      "name": "Sharp Pro 6MT/CVT",
+      "price": "₹21.14 Lakh*",
+      "fuel": "Petrol",
+      "transmission": "Manual/CVT"
+    }
+  ],
+  "features": [
+    "70+ Connected Car Features",
+    "ADAS Level-2 Autonomous Technology",
+    "Voice Command Control (100+ commands)",
+    "360° HD Camera System",
+    "Panoramic Sunroof"
+  ],
+  "specifications": {
+    "engine": {
+      "petrol": "1.5L Turbo Petrol - 143 PS / 250 Nm",
+      "diesel": "2.0L Diesel Turbo - 170 PS / 350 Nm"
+    },
+    "transmission": "6-Speed Manual / CVT Automatic"
+  },
+  "is_active": true,
+  "display_order": 3,
+  "updated_by": "admin"
+}
+

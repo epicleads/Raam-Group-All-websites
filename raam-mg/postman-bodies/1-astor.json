@@ -1,0 +1,59 @@
+{
+  "model_name": "astor",
+  "model_display_name": "MG Astor",
+  "starting_price": "₹9.99 Lakh*",
+  "top_price": "₹13.69 Lakh*",
+  "variants": [
+    {
+      "name": "Sprint",
+      "price": "₹9.99 Lakh*",
+      "fuel": "Petrol",
+      "transmission": "5MT"
+    },
+    {
+      "name": "Shine",
+      "price": "₹11.59 Lakh*",
+      "fuel": "Petrol",
+      "transmission": "5MT/8CVT"
+    },
+    {
+      "name": "Select",
+      "price": "₹12.69 Lakh*",
+      "fuel": "Petrol",
+      "transmission": "5MT/8CVT"
+    },
+    {
+      "name": "Sharp Pro",
+      "price": "₹13.69 Lakh*",
+      "fuel": "Petrol",
+      "transmission": "8CVT"
+    }
+  ],
+  "features": [
+    "Most Advanced SUV in its Class",
+    "India's First AI-Powered SUV",
+    "14 Autonomous Level-2 ADAS Features",
+    "Personal AI Assistant",
+    "25.7cm HD Touchscreen",
+    "Digital Instrument Cluster 17.78cm",
+    "6 Airbags with ESP",
+    "49 Standard Safety Features",
+    "Panoramic Skyroof",
+    "i-Smart 2.0 Technology"
+  ],
+  "specifications": {
+    "engine": {
+      "petrol": "VTi-TECH 1.5L - 110 PS / 144 Nm"
+    },
+    "transmission": "5MT / 8CVT",
+    "driveType": "Front Wheel Drive",
+    "fuelTank": "45 Litres",
+    "bootSpace": "448 Litres",
+    "seating": "5 Seater",
+    "groundClearance": "180 mm"
+  },
+  "is_active": true,
+  "display_order": 1,
+  "updated_by": "admin"
+}
+

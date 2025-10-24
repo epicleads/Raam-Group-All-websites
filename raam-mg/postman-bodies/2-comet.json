@@ -1,0 +1,50 @@
+{
+  "model_name": "comet",
+  "model_display_name": "MG Comet EV",
+  "starting_price": "₹7.49 Lakh*",
+  "top_price": "₹10.85 Lakh*",
+  "variants": [
+    {
+      "name": "Pace",
+      "price": "₹7.98 Lakh*",
+      "fuel": "Electric",
+      "transmission": "Single Speed"
+    },
+    {
+      "name": "Play",
+      "price": "₹8.78 Lakh*",
+      "fuel": "Electric",
+      "transmission": "Single Speed"
+    },
+    {
+      "name": "Plush",
+      "price": "₹9.98 Lakh*",
+      "fuel": "Electric",
+      "transmission": "Single Speed"
+    },
+    {
+      "name": "Plush+",
+      "price": "₹10.85 Lakh*",
+      "fuel": "Electric",
+      "transmission": "Single Speed"
+    }
+  ],
+  "features": [
+    "India's Most Affordable Electric Car",
+    "17.3 kWh Battery Pack",
+    "230 km City Range",
+    "41 BHP Electric Motor",
+    "Compact 4-Seater Design",
+    "Zero Emission Mobility"
+  ],
+  "specifications": {
+    "motor": "41 BHP Permanent Magnet Synchronous Motor",
+    "battery": "17.3 kWh Lithium-ion Battery",
+    "range": "230 km (City Driving)",
+    "charging": "7.4kW AC: 7 hours (0-100%)"
+  },
+  "is_active": true,
+  "display_order": 2,
+  "updated_by": "admin"
+}
+

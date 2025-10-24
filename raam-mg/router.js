@@ -11,6 +11,29 @@ const {
   deleteHeroSlider,
 } = require('./MGAdsHeroSliders');
 
+const {
+  getActiveTheme,
+  getAllThemes,
+  getThemeById,
+  activateTheme,
+  createTheme,
+  updateTheme,
+  deleteTheme,
+  getAllHeaderConfigs,
+  getHeaderConfigByKey,
+  updateHeaderConfig,
+  bulkUpdateHeaderConfigs,
+} = require('./headerTheme');
+
+const {
+  getAllModelsPricing,
+  getModelPricing,
+  createModelPricing,
+  updateModelPricing,
+  deleteModelPricing,
+  updateModelVariants,
+} = require('./mg_models_pricing');
+
 const router = express.Router();
 
 // Ensure uploads directory exists
@@ -215,5 +238,160 @@ router.delete('/hero-sliders/:id', async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 });
+
+// ===== HEADER THEME ROUTES =====
+
+// GET - Get active theme
+router.get('/header-theme/active', async (req, res) => {
+  try {
+    const theme = await getActiveTheme();
+    res.json({ success: true, data: theme });
+  } catch (error) {
+    console.error('Error fetching active theme:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// GET - Get all themes
+router.get('/header-themes', async (req, res) => {
+  try {
+    const themes = await getAllThemes();
+    res.json({ success: true, data: themes });
+  } catch (error) {
+    console.error('Error fetching themes:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// GET - Get theme by ID
+router.get('/header-themes/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const theme = await getThemeById(id);
+    res.json({ success: true, data: theme });
+  } catch (error) {
+    console.error('Error fetching theme:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// POST - Activate theme
+router.post('/header-themes/:id/activate', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { activatedBy } = req.body;
+    const theme = await activateTheme(id, activatedBy || 'admin');
+    res.json({ success: true, data: theme });
+  } catch (error) {
+    console.error('Error activating theme:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// POST - Create new theme
+router.post('/header-themes', async (req, res) => {
+  try {
+    const theme = await createTheme(req.body);
+    res.json({ success: true, data: theme });
+  } catch (error) {
+    console.error('Error creating theme:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// PUT - Update theme
+router.put('/header-themes/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const theme = await updateTheme(id, req.body);
+    res.json({ success: true, data: theme });
+  } catch (error) {
+    console.error('Error updating theme:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// DELETE - Delete theme
+router.delete('/header-themes/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await deleteTheme(id);
+    res.json({ success: true, message: result.message });
+  } catch (error) {
+    console.error('Error deleting theme:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ===== HEADER CONFIG ROUTES =====
+
+// GET - Get all header configs
+router.get('/header-configs', async (req, res) => {
+  try {
+    const configs = await getAllHeaderConfigs();
+    res.json({ success: true, data: configs });
+  } catch (error) {
+    console.error('Error fetching header configs:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// GET - Get config by key
+router.get('/header-configs/:key', async (req, res) => {
+  try {
+    const { key } = req.params;
+    const config = await getHeaderConfigByKey(key);
+    res.json({ success: true, data: config });
+  } catch (error) {
+    console.error('Error fetching header config:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// PUT - Update header config
+router.put('/header-configs/:key', async (req, res) => {
+  try {
+    const { key } = req.params;
+    const { value } = req.body;
+    const config = await updateHeaderConfig(key, value);
+    res.json({ success: true, data: config });
+  } catch (error) {
+    console.error('Error updating header config:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// POST - Bulk update header configs
+router.post('/header-configs/bulk-update', async (req, res) => {
+  try {
+    const configs = await bulkUpdateHeaderConfigs(req.body);
+    res.json({ success: true, data: configs });
+  } catch (error) {
+    console.error('Error bulk updating header configs:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// =====================================================
+// MG MODELS PRICING ROUTES
+// =====================================================
+
+// GET - Get all models pricing
+router.get('/models/pricing', getAllModelsPricing);
+
+// GET - Get specific model pricing
+router.get('/models/pricing/:modelName', getModelPricing);
+
+// POST - Create new model pricing
+router.post('/models/pricing', createModelPricing);
+
+// PUT - Update model pricing
+router.put('/models/pricing/:modelName', updateModelPricing);
+
+// DELETE - Delete/deactivate model pricing
+router.delete('/models/pricing/:modelName', deleteModelPricing);
+
+// PATCH - Update only variants for a model
+router.patch('/models/pricing/:modelName/variants', updateModelVariants);
 
 module.exports = router;

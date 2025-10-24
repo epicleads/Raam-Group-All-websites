@@ -1,0 +1,42 @@
+{
+  "model_name": "zsev",
+  "model_display_name": "MG ZS EV",
+  "starting_price": "₹18.98 Lakh*",
+  "top_price": "₹25.88 Lakh*",
+  "variants": [
+    {
+      "name": "Excite",
+      "price": "₹18.98 Lakh*",
+      "fuel": "Electric",
+      "transmission": "Single Speed"
+    },
+    {
+      "name": "Exclusive",
+      "price": "₹21.98 Lakh*",
+      "fuel": "Electric",
+      "transmission": "Single Speed"
+    },
+    {
+      "name": "Essence",
+      "price": "₹25.88 Lakh*",
+      "fuel": "Electric",
+      "transmission": "Single Speed"
+    }
+  ],
+  "features": [
+    "461 km Range",
+    "50.3 kWh Battery",
+    "Premium Electric SUV",
+    "Zero Emission",
+    "Advanced Connected Features"
+  ],
+  "specifications": {
+    "motor": "Electric Motor - 176 PS / 280 Nm",
+    "battery": "50.3 kWh Lithium-ion Battery",
+    "range": "461 km"
+  },
+  "is_active": true,
+  "display_order": 6,
+  "updated_by": "admin"
+}
+

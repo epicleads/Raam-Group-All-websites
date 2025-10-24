@@ -1,0 +1,380 @@
+═══════════════════════════════════════════════════════════════
+  POSTMAN REQUESTS - MG MODELS PRICING
+  Copy-paste each request into Postman
+═══════════════════════════════════════════════════════════════
+
+🔧 POSTMAN SETUP:
+1. Method: POST
+2. URL: http://localhost:5000/admin/raam-mg/models/pricing
+   OR:  https://raam-group-all-websites.onrender.com/admin/raam-mg/models/pricing
+3. Headers: Content-Type: application/json
+4. Body: Select "raw" → "JSON"
+5. Paste the JSON body below
+
+═══════════════════════════════════════════════════════════════
+  REQUEST 1: MG ASTOR
+═══════════════════════════════════════════════════════════════
+
+{
+  "model_name": "astor",
+  "model_display_name": "MG Astor",
+  "starting_price": "₹9.99 Lakh*",
+  "top_price": "₹13.69 Lakh*",
+  "variants": [
+    {
+      "name": "Sprint",
+      "price": "₹9.99 Lakh*",
+      "fuel": "Petrol",
+      "transmission": "5MT"
+    },
+    {
+      "name": "Shine",
+      "price": "₹11.59 Lakh*",
+      "fuel": "Petrol",
+      "transmission": "5MT/8CVT"
+    },
+    {
+      "name": "Select",
+      "price": "₹12.69 Lakh*",
+      "fuel": "Petrol",
+      "transmission": "5MT/8CVT"
+    },
+    {
+      "name": "Sharp Pro",
+      "price": "₹13.69 Lakh*",
+      "fuel": "Petrol",
+      "transmission": "8CVT"
+    }
+  ],
+  "features": [
+    "Most Advanced SUV in its Class",
+    "India's First AI-Powered SUV",
+    "14 Autonomous Level-2 ADAS Features",
+    "Personal AI Assistant",
+    "25.7cm HD Touchscreen",
+    "Digital Instrument Cluster 17.78cm",
+    "6 Airbags with ESP",
+    "49 Standard Safety Features",
+    "Panoramic Skyroof",
+    "i-Smart 2.0 Technology"
+  ],
+  "specifications": {
+    "engine": {
+      "petrol": "VTi-TECH 1.5L - 110 PS / 144 Nm"
+    },
+    "transmission": "5MT / 8CVT",
+    "driveType": "Front Wheel Drive",
+    "fuelTank": "45 Litres",
+    "bootSpace": "448 Litres",
+    "seating": "5 Seater",
+    "groundClearance": "180 mm"
+  },
+  "is_active": true,
+  "display_order": 1,
+  "updated_by": "admin"
+}
+
+═══════════════════════════════════════════════════════════════
+  REQUEST 2: MG COMET EV
+═══════════════════════════════════════════════════════════════
+
+{
+  "model_name": "comet",
+  "model_display_name": "MG Comet EV",
+  "starting_price": "₹7.49 Lakh*",
+  "top_price": "₹10.85 Lakh*",
+  "variants": [
+    {
+      "name": "Pace",
+      "price": "₹7.98 Lakh*",
+      "fuel": "Electric",
+      "transmission": "Single Speed"
+    },
+    {
+      "name": "Play",
+      "price": "₹8.78 Lakh*",
+      "fuel": "Electric",
+      "transmission": "Single Speed"
+    },
+    {
+      "name": "Plush",
+      "price": "₹9.98 Lakh*",
+      "fuel": "Electric",
+      "transmission": "Single Speed"
+    },
+    {
+      "name": "Plush+",
+      "price": "₹10.85 Lakh*",
+      "fuel": "Electric",
+      "transmission": "Single Speed"
+    }
+  ],
+  "features": [
+    "India's Most Affordable Electric Car",
+    "17.3 kWh Battery Pack",
+    "230 km City Range",
+    "41 BHP Electric Motor",
+    "Compact 4-Seater Design",
+    "Zero Emission Mobility"
+  ],
+  "specifications": {
+    "motor": "41 BHP Permanent Magnet Synchronous Motor",
+    "battery": "17.3 kWh Lithium-ion Battery",
+    "range": "230 km (City Driving)",
+    "charging": "7.4kW AC: 7 hours (0-100%)"
+  },
+  "is_active": true,
+  "display_order": 2,
+  "updated_by": "admin"
+}
+
+═══════════════════════════════════════════════════════════════
+  REQUEST 3: MG HECTOR
+═══════════════════════════════════════════════════════════════
+
+{
+  "model_name": "hector",
+  "model_display_name": "MG Hector",
+  "starting_price": "₹14.49 Lakh*",
+  "top_price": "₹21.42 Lakh*",
+  "variants": [
+    {
+      "name": "Style 6MT",
+      "price": "₹14.49 Lakh*",
+      "fuel": "Petrol",
+      "transmission": "Manual"
+    },
+    {
+      "name": "Shine 6MT/CVT",
+      "price": "₹16.99 Lakh*",
+      "fuel": "Petrol",
+      "transmission": "Manual/CVT"
+    },
+    {
+      "name": "Shine Pro 6MT/CVT",
+      "price": "₹17.43 Lakh*",
+      "fuel": "Petrol",
+      "transmission": "Manual/CVT"
+    },
+    {
+      "name": "Select Pro 6MT/CVT",
+      "price": "₹18.58 Lakh*",
+      "fuel": "Petrol",
+      "transmission": "Manual/CVT"
+    },
+    {
+      "name": "Smart Pro 6MT/CVT",
+      "price": "₹19.57 Lakh*",
+      "fuel": "Petrol",
+      "transmission": "Manual/CVT"
+    },
+    {
+      "name": "Sharp Pro 6MT/CVT",
+      "price": "₹21.14 Lakh*",
+      "fuel": "Petrol",
+      "transmission": "Manual/CVT"
+    }
+  ],
+  "features": [
+    "70+ Connected Car Features",
+    "ADAS Level-2 Autonomous Technology",
+    "Voice Command Control (100+ commands)",
+    "360° HD Camera System",
+    "Panoramic Sunroof"
+  ],
+  "specifications": {
+    "engine": {
+      "petrol": "1.5L Turbo Petrol - 143 PS / 250 Nm",
+      "diesel": "2.0L Diesel Turbo - 170 PS / 350 Nm"
+    },
+    "transmission": "6-Speed Manual / CVT Automatic"
+  },
+  "is_active": true,
+  "display_order": 3,
+  "updated_by": "admin"
+}
+
+═══════════════════════════════════════════════════════════════
+  REQUEST 4: MG WINDSOR EV
+═══════════════════════════════════════════════════════════════
+
+{
+  "model_name": "windsor",
+  "model_display_name": "MG Windsor EV",
+  "starting_price": "₹13.49 Lakh*",
+  "top_price": "₹15.49 Lakh*",
+  "variants": [
+    {
+      "name": "Excite",
+      "price": "₹13.49 Lakh*",
+      "fuel": "Electric",
+      "transmission": "Single Speed"
+    },
+    {
+      "name": "Exclusive",
+      "price": "₹14.49 Lakh*",
+      "fuel": "Electric",
+      "transmission": "Single Speed"
+    },
+    {
+      "name": "Essence",
+      "price": "₹15.49 Lakh*",
+      "fuel": "Electric",
+      "transmission": "Single Speed"
+    }
+  ],
+  "features": [
+    "331 km Range",
+    "38 kWh Battery Pack",
+    "Premium Electric Sedan",
+    "Zero Emission Luxury",
+    "Smart Connected Features"
+  ],
+  "specifications": {
+    "motor": "Electric Motor",
+    "battery": "38 kWh Lithium-ion Battery",
+    "range": "331 km"
+  },
+  "is_active": true,
+  "display_order": 4,
+  "updated_by": "admin"
+}
+
+═══════════════════════════════════════════════════════════════
+  REQUEST 5: MG GLOSTER
+═══════════════════════════════════════════════════════════════
+
+{
+  "model_name": "gloster",
+  "model_display_name": "MG Gloster",
+  "starting_price": "₹38.80 Lakh*",
+  "top_price": "₹43.87 Lakh*",
+  "variants": [
+    {
+      "name": "Super",
+      "price": "₹38.80 Lakh*",
+      "fuel": "Diesel",
+      "transmission": "8AT"
+    },
+    {
+      "name": "Smart",
+      "price": "₹40.83 Lakh*",
+      "fuel": "Diesel",
+      "transmission": "8AT"
+    },
+    {
+      "name": "Savvy",
+      "price": "₹42.91 Lakh*",
+      "fuel": "Diesel",
+      "transmission": "8AT"
+    },
+    {
+      "name": "Savvy 7S",
+      "price": "₹43.87 Lakh*",
+      "fuel": "Diesel",
+      "transmission": "8AT"
+    }
+  ],
+  "features": [
+    "Full-Size 7-Seater SUV",
+    "ADAS Level-2 Technology",
+    "Autonomous Level 1",
+    "Premium Luxury SUV",
+    "4WD Capability"
+  ],
+  "specifications": {
+    "engine": {
+      "diesel": "2.0L Twin-Turbo Diesel - 218 PS / 480 Nm"
+    },
+    "transmission": "8-Speed Automatic"
+  },
+  "is_active": true,
+  "display_order": 5,
+  "updated_by": "admin"
+}
+
+═══════════════════════════════════════════════════════════════
+  REQUEST 6: MG ZS EV
+═══════════════════════════════════════════════════════════════
+
+{
+  "model_name": "zsev",
+  "model_display_name": "MG ZS EV",
+  "starting_price": "₹18.98 Lakh*",
+  "top_price": "₹25.88 Lakh*",
+  "variants": [
+    {
+      "name": "Excite",
+      "price": "₹18.98 Lakh*",
+      "fuel": "Electric",
+      "transmission": "Single Speed"
+    },
+    {
+      "name": "Exclusive",
+      "price": "₹21.98 Lakh*",
+      "fuel": "Electric",
+      "transmission": "Single Speed"
+    },
+    {
+      "name": "Essence",
+      "price": "₹25.88 Lakh*",
+      "fuel": "Electric",
+      "transmission": "Single Speed"
+    }
+  ],
+  "features": [
+    "461 km Range",
+    "50.3 kWh Battery",
+    "Premium Electric SUV",
+    "Zero Emission",
+    "Advanced Connected Features"
+  ],
+  "specifications": {
+    "motor": "Electric Motor - 176 PS / 280 Nm",
+    "battery": "50.3 kWh Lithium-ion Battery",
+    "range": "461 km"
+  },
+  "is_active": true,
+  "display_order": 6,
+  "updated_by": "admin"
+}
+
+═══════════════════════════════════════════════════════════════
+  POSTMAN EXECUTION STEPS:
+═══════════════════════════════════════════════════════════════
+
+1. Open Postman
+2. Create new request
+3. Set method: POST
+4. Set URL: http://localhost:5000/admin/raam-mg/models/pricing
+5. Go to Headers tab:
+   - Key: Content-Type
+   - Value: application/json
+6. Go to Body tab:
+   - Select "raw"
+   - Select "JSON" from dropdown
+   - Paste one of the JSON bodies above
+7. Click "Send"
+8. Repeat for all 6 models
+
+EXPECTED RESPONSE:
+{
+  "success": true,
+  "message": "Model pricing for MG Astor created successfully",
+  "data": { ... },
+  "timestamp": "2025-10-23T..."
+}
+
+═══════════════════════════════════════════════════════════════
+  VERIFY DATA:
+═══════════════════════════════════════════════════════════════
+
+After creating all models, test GET request:
+
+Method: GET
+URL: http://localhost:5000/admin/raam-mg/models/pricing
+
+Should return all 6 models with pricing data.
+
+═══════════════════════════════════════════════════════════════
+
