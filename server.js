@@ -62,6 +62,7 @@ const sellNowRoutes = require("./EpicLuxeBackend/servicesRoutes/sellNowRoutes");
 const brandData = require("./EpicLuxeBackend/reassured/brandData");
 const heroBanner = require("./raam-honda/heroBanner");
 const hondaLeadsRoute = require("./raam-honda/honda_leads");
+const careersRoute = require("./group/careers");
 
 // Add specific middleware for leads route to debug
 app.use("/admin/leads", (req, res, next) => {
@@ -88,7 +89,7 @@ app.use("/admin/raam-mg/leads", mgLeadsRoute);
 app.use("/admin", brandData);
 app.use("/admin/raam-honda", heroBanner);
 app.use("/admin/raam-honda/leads", hondaLeadsRoute);
-
+app.use("/admin/careers", careersRoute);
 // Simple health check endpoint
 app.get("/health", (req, res) => {
   console.log("💚 Health check requested");
