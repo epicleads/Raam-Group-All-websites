@@ -166,11 +166,68 @@ async function deleteTeamMember(id) {
   }
 }
 
-// Export all functions
-module.exports = {
-  addTeamMember,
-  getAllTeamMembers,
-  getTeamMemberById,
-  updateTeamMember,
-  deleteTeamMember,
-};
+// -----------------------------
+// EXPRESS ROUTES
+// -----------------------------
+const express = require('express');
+const router = express.Router();
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
+
+// Get all team members
+router.get('/members', async (req, res) => {
+  try {
+    const members = await getAllTeamMembers();
+    res.json(members || []);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get single team member
+router.get('/members/:id', async (req, res) => {
+  try {
+    const member = await getTeamMemberById(req.params.id);
+    if (!member) {
+      return res.status(404).json({ error: 'Team member not found' });
+    }
+    res.json(member);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Create team member
+router.post('/members', upload.single('profile_image'), async (req, res) => {
+  try {
+    const filePath = req.file ? req.file.path : null;
+    const member = await addTeamMember(req.body, filePath);
+    res.status(201).json(member);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Update team member
+router.put('/members/:id', upload.single('profile_image'), async (req, res) => {
+  try {
+    const filePath = req.file ? req.file.path : null;
+    const member = await updateTeamMember(req.params.id, req.body, filePath);
+    res.json(member);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Delete team member
+router.delete('/members/:id', async (req, res) => {
+  try {
+    await deleteTeamMember(req.params.id);
+    res.json({ success: true, message: 'Team member deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Export router
+module.exports = router;
