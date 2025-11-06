@@ -7,8 +7,12 @@ const fs = require('fs');
 
 const router = express.Router();
 
-// Multer setup
+// Multer setup: accept optional desktop and mobile creatives
 const upload = multer({ dest: 'uploads/' });
+const uploadFields = upload.fields([
+  { name: 'desktop', maxCount: 1 },
+  { name: 'mobile', maxCount: 1 },
+]);
 
 // Supabase client
 const supabase = createClient(
@@ -16,178 +20,229 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_KEY
 );
 
-const BUCKET = process.env.SUPABASE_BUCKET_ATHER_CAMPAIGNS; // "ather-campaigns"
+const BUCKET = process.env.SUPABASE_BUCKET_ATHER_CAMPAOGNS || 'ather-hero-sliders';
+const TABLE = 'ather-hero-slider';
 
-// ---------------- CREATE CAMPAIGN ----------------
-router.post('/create', upload.single('creative'), async (req, res) => {
+function parseBool(value, fallback = false) {
+  if (value === undefined || value === null) return fallback;
+  if (typeof value === 'boolean') return value;
+  const s = String(value).toLowerCase();
+  return s === 'true' || s === '1' || s === 'yes';
+}
+
+function parseDate(value) {
+  if (!value) return null;
+  const d = new Date(value);
+  return isNaN(d.getTime()) ? null : d.toISOString();
+}
+
+async function uploadToBucket(file, keyParts = []) {
+  if (!file) return null;
+  const ext = file.originalname.split('.').pop();
+  const fileName = `${uuidv4()}.${ext}`;
+  const path = [...keyParts, fileName].join('/');
+  const fileBuffer = fs.readFileSync(file.path);
+  const { error: uploadError } = await supabase.storage
+    .from(BUCKET)
+    .upload(path, fileBuffer, { contentType: file.mimetype, upsert: true });
+  fs.unlinkSync(file.path);
+  if (uploadError) throw uploadError;
+  const { data: publicUrlData } = supabase.storage.from(BUCKET).getPublicUrl(path);
+  return publicUrlData.publicUrl;
+}
+
+// ---------------- CREATE HERO SLIDE ----------------
+router.post('/hero-slides/create', uploadFields, async (req, res) => {
   try {
-    const { cta_text, cta_link, end_date, slug, location } = req.body;
+    const {
+      cta_text,
+      cta_link,
+      order_index,
+      is_visible,
+      active_from,
+      active_until,
+      scope = 'homepage',
+      is_default,
+    } = req.body;
 
-    if (!location) {
-      return res.status(400).json({ error: 'Location is required (chennai or hyderabad)' });
-    }
+    if (!cta_text) return res.status(400).json({ error: 'cta_text is required' });
+    if (!req.files || !req.files.desktop) return res.status(400).json({ error: 'desktop creative is required' });
 
-    if (!req.file) {
-      return res.status(400).json({ error: 'No creative file uploaded' });
-    }
+    const desktopFile = req.files.desktop?.[0] || null;
+    const mobileFile = req.files.mobile?.[0] || null;
 
-    // Upload creative (image or video) to Supabase Storage
-    const ext = req.file.originalname.split('.').pop();
-    const fileName = `${uuidv4()}.${ext}`;
-    const filePath = `campaigns/${location}/${slug}/${fileName}`;
+    const folderKey = ['hero', scope, uuidv4()];
+    const desktopUrl = await uploadToBucket(desktopFile, [...folderKey, 'desktop']);
+    const mobileUrl = mobileFile ? await uploadToBucket(mobileFile, [...folderKey, 'mobile']) : null;
 
-    const fileBuffer = fs.readFileSync(req.file.path);
+    const payload = {
+      desktop_src: desktopUrl,
+      mobile_src: mobileUrl,
+      cta_text,
+      cta_link: cta_link || null,
+      order_index: Number.isFinite(Number(order_index)) ? Number(order_index) : 0,
+      is_visible: parseBool(is_visible, true),
+      active_from: parseDate(active_from),
+      active_until: parseDate(active_until),
+      scope,
+      is_default: parseBool(is_default, false),
+    };
 
-    const { error: uploadError } = await supabase.storage
-      .from(BUCKET)
-      .upload(filePath, fileBuffer, {
-        contentType: req.file.mimetype,
-        upsert: true,
-      });
-
-    fs.unlinkSync(req.file.path); // delete local temp file
-
-    if (uploadError) throw uploadError;
-
-    // Get public URL
-    const { data: publicUrlData } = supabase.storage
-      .from(BUCKET)
-      .getPublicUrl(filePath);
-
-    // Insert into DB
     const { data, error } = await supabase
-      .from('ather_campaigns')
-      .insert([
-        {
-          creative_url: publicUrlData.publicUrl,
-          cta_text,
-          cta_link,
-          end_date,
-          slug,
-          location,
-        },
-      ])
+      .from(TABLE)
+      .insert([payload])
       .select();
-
     if (error) throw error;
-
-    res.json({ success: true, campaign: data[0] });
+    res.json({ success: true, slide: data[0] });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
 
-// ---------------- GET ALL CAMPAIGNS ----------------
-router.get('/all', async (req, res) => {
+// ---------------- GET ALL HERO SLIDES (admin) ----------------
+router.get('/hero-slides/all', async (req, res) => {
   try {
-    const { location } = req.query;
-
-    let query = supabase.from('ather_campaigns').select('*').order('created_at', { ascending: false });
-
-    if (location) {
-      query = query.eq('location', location);
-    }
-
+    const { scope, include_inactive } = req.query;
+    let query = supabase.from(TABLE).select('*');
+    if (scope) query = query.eq('scope', scope);
+    if (!parseBool(include_inactive, false)) query = query.eq('is_visible', true);
+    query = query.order('order_index', { ascending: true }).order('created_at', { ascending: false });
     const { data, error } = await query;
-
     if (error) throw error;
-    res.json({ campaigns: data });
+    res.json({ slides: data });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// ---------------- GET SINGLE CAMPAIGN (BY SLUG + LOCATION) ----------------
-router.get('/:slug', async (req, res) => {
+// ---------------- PUBLIC FEED (active for scope, fallback default) ----------------
+router.get('/hero-slides/public', async (req, res) => {
   try {
-    const { slug } = req.params;
-    const { location } = req.query;
+    const { scope = 'homepage' } = req.query;
+    const nowIso = new Date().toISOString();
 
-    let query = supabase.from('ather_campaigns').select('*').eq('slug', slug);
+    // Try active offers first
+    let { data: active, error: errActive } = await supabase
+      .from(TABLE)
+      .select('*')
+      .eq('scope', scope)
+      .eq('is_visible', true)
+      .or(`active_until.is.null,active_until.gte.${nowIso}`)
+      .order('order_index', { ascending: true });
+    if (errActive) throw errActive;
 
-    if (location) {
-      query = query.eq('location', location);
+    if (active && active.length > 0) {
+      return res.json({ scope, slides: active });
     }
 
-    const { data, error } = await query.single();
+    // Fallback to default per scope
+    const { data: fallback, error: errFallback } = await supabase
+      .from(TABLE)
+      .select('*')
+      .eq('scope', scope)
+      .eq('is_default', true)
+      .eq('is_visible', true)
+      .order('order_index', { ascending: true });
+    if (errFallback) throw errFallback;
 
-    if (error) throw error;
-    res.json({ campaign: data });
+    res.json({ scope, slides: fallback || [] });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// ---------------- UPDATE CAMPAIGN ----------------
-router.put('/update/:id', upload.single('creative'), async (req, res) => {
+// ---------------- GET SINGLE SLIDE ----------------
+router.get('/hero-slides/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { cta_text, cta_link, end_date, slug, location } = req.body;
+    const { data, error } = await supabase.from(TABLE).select('*').eq('id', id).single();
+    if (error) throw error;
+    res.json({ slide: data });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
-    let creativeUrl = null;
+// ---------------- UPDATE SLIDE ----------------
+router.put('/hero-slides/update/:id', uploadFields, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      cta_text,
+      cta_link,
+      order_index,
+      is_visible,
+      active_from,
+      active_until,
+      scope,
+      is_default,
+    } = req.body;
 
-    // If creative file is uploaded → replace
-    if (req.file) {
-      const ext = req.file.originalname.split('.').pop();
-      const fileName = `${uuidv4()}.${ext}`;
-      const filePath = `campaigns/${location}/${slug}/${fileName}`;
+    const desktopFile = req.files?.desktop?.[0] || null;
+    const mobileFile = req.files?.mobile?.[0] || null;
 
-      const fileBuffer = fs.readFileSync(req.file.path);
+    const updates = {};
+    if (cta_text !== undefined) updates.cta_text = cta_text;
+    if (cta_link !== undefined) updates.cta_link = cta_link;
+    if (order_index !== undefined) updates.order_index = Number(order_index);
+    if (is_visible !== undefined) updates.is_visible = parseBool(is_visible);
+    if (active_from !== undefined) updates.active_from = parseDate(active_from);
+    if (active_until !== undefined) updates.active_until = parseDate(active_until);
+    if (scope !== undefined) updates.scope = scope;
+    if (is_default !== undefined) updates.is_default = parseBool(is_default);
 
-      const { error: uploadError } = await supabase.storage
-        .from(BUCKET)
-        .upload(filePath, fileBuffer, {
-          contentType: req.file.mimetype,
-          upsert: true,
-        });
-
-      fs.unlinkSync(req.file.path);
-
-      if (uploadError) throw uploadError;
-
-      const { data: publicUrlData } = supabase.storage
-        .from(BUCKET)
-        .getPublicUrl(filePath);
-
-      creativeUrl = publicUrlData.publicUrl;
+    // Upload replacements if provided
+    if (desktopFile) {
+      const desktopUrl = await uploadToBucket(desktopFile, ['hero', updates.scope || 'homepage', id, 'desktop']);
+      updates.desktop_src = desktopUrl;
+    }
+    if (mobileFile) {
+      const mobileUrl = await uploadToBucket(mobileFile, ['hero', updates.scope || 'homepage', id, 'mobile']);
+      updates.mobile_src = mobileUrl;
     }
 
-    // Update DB record
     const { data, error } = await supabase
-      .from('ather_campaigns')
-      .update({
-        cta_text,
-        cta_link,
-        end_date,
-        slug,
-        location,
-        ...(creativeUrl && { creative_url: creativeUrl }),
-      })
+      .from(TABLE)
+      .update(updates)
       .eq('id', id)
       .select();
-
     if (error) throw error;
-
-    res.json({ success: true, campaign: data[0] });
+    res.json({ success: true, slide: data[0] });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// ---------------- DELETE CAMPAIGN ----------------
-router.delete('/delete/:id', async (req, res) => {
+// ---------------- REORDER (batch) ----------------
+router.patch('/hero-slides/reorder', async (req, res) => {
+  try {
+    const { items } = req.body; // [{id, order_index}, ...]
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ error: 'items array is required' });
+    }
+    const updates = await Promise.all(items.map(async (item) => {
+      const { data, error } = await supabase
+        .from(TABLE)
+        .update({ order_index: Number(item.order_index) })
+        .eq('id', item.id)
+        .select();
+      if (error) throw error;
+      return data[0];
+    }));
+    res.json({ success: true, slides: updates });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ---------------- DELETE SLIDE ----------------
+router.delete('/hero-slides/delete/:id', async (req, res) => {
   try {
     const { id } = req.params;
-
-    const { error } = await supabase
-      .from('ather_campaigns')
-      .delete()
-      .eq('id', id);
-
+    const { error } = await supabase.from(TABLE).delete().eq('id', id);
     if (error) throw error;
-
-    res.json({ success: true, message: 'Campaign deleted' });
+    res.json({ success: true, message: 'Slide deleted' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
