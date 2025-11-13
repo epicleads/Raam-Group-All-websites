@@ -64,6 +64,7 @@ const heroBanner = require("./raam-honda/heroBanner");
 const hondaLeadsRoute = require("./raam-honda/honda_leads");
 const careersRoute = require("./group/careers");
 const ourTeamRoute = require("./group/ourTeam");
+const mgDigitalLeadsRoute = require("./MGDigitalLeads/routes/leads");
 
 // Add specific middleware for leads route to debug
 app.use("/admin/leads", (req, res, next) => {
@@ -92,6 +93,7 @@ app.use("/admin/raam-honda", heroBanner);
 app.use("/admin/raam-honda/leads", hondaLeadsRoute);
 app.use("/admin/careers", careersRoute);
 app.use("/admin/our-team", ourTeamRoute);
+app.use("/admin/mg-digital-leads", mgDigitalLeadsRoute);
 // Simple health check endpoint
 app.get("/health", (req, res) => {
   console.log("💚 Health check requested");

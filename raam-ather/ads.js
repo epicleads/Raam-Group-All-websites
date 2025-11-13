@@ -120,6 +120,7 @@ router.get('/hero-slides/all', async (req, res) => {
 router.get('/hero-slides/public', async (req, res) => {
   try {
     const { scope = 'homepage' } = req.query;
+    console.log('[HeroSlides] Public feed requested', { scope });
     const nowIso = new Date().toISOString();
 
     // Try active offers first
@@ -131,6 +132,11 @@ router.get('/hero-slides/public', async (req, res) => {
       .or(`active_until.is.null,active_until.gte.${nowIso}`)
       .order('order_index', { ascending: true });
     if (errActive) throw errActive;
+
+    console.log('[HeroSlides] Active query result', {
+      scope,
+      count: active?.length || 0,
+    });
 
     if (active && active.length > 0) {
       return res.json({ scope, slides: active });
@@ -146,8 +152,17 @@ router.get('/hero-slides/public', async (req, res) => {
       .order('order_index', { ascending: true });
     if (errFallback) throw errFallback;
 
+    console.log('[HeroSlides] Fallback query result', {
+      scope,
+      count: fallback?.length || 0,
+    });
+
     res.json({ scope, slides: fallback || [] });
   } catch (err) {
+    console.error('[HeroSlides] Public feed error', {
+      scope: req.query?.scope,
+      message: err?.message,
+    });
     res.status(500).json({ error: err.message });
   }
 });
