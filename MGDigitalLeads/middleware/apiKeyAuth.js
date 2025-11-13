@@ -2,6 +2,7 @@ const SOURCE_KEYS = {
   cardekho: process.env.LEAD_API_KEY_CARDEKHO,
   carwale: process.env.LEAD_API_KEY_CARWALE,
   runo: process.env.LEAD_API_KEY_RUNO,
+  meta: "raam-digital-2025-supersecret-meta",
 };
 
 function logMissingKey(source) {

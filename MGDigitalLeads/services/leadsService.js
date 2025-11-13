@@ -65,4 +65,19 @@ async function getAllLeads(filters = {}) {
   return data;
 }
 
-module.exports = { insertLead, getAllLeads };
+async function leadExistsByExternalId(platform, externalId) {
+  if (!externalId) return false;
+
+  const { data, error } = await supabase
+    .from("mg-digital-leads")
+    .select("id")
+    .eq("platform", platform)
+    .eq("payload->>id", externalId)
+    .limit(1)
+    .maybeSingle();
+
+  if (error) throw error;
+  return Boolean(data);
+}
+
+module.exports = { insertLead, getAllLeads, leadExistsByExternalId };

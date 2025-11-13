@@ -5,6 +5,7 @@ const {
   createCarWaleLead,
   createRunoLead,
   getLeads,
+  syncMetaLeadsController,
 } = require("../controllers/leadsController");
 const { requireSourceApiKey } = require("../middleware/apiKeyAuth");
 
@@ -24,6 +25,7 @@ router.post(
   requireSourceApiKey("runo"),
   createRunoLead
 );
+router.post("/source/meta/sync", syncMetaLeadsController);
 
 // GET all leads (for dashboard)
 router.get("/", getLeads);

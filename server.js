@@ -56,6 +56,7 @@ const reassured_leads = require("./EpicLuxeBackend/reassured/leads");
 const leadsRoute = require("./EpicLuxeBackend/Leads");
 const adsRoute = require("./raam-ather/ads");
 const landingPageBanner = require("./EpicToyota/LandingPageBanner");
+const { syncMetaLeads } = require("./MGDigitalLeads/services/metaLeadsService");
 const mgRouter = require("./raam-mg/router");
 const mgLeadsRoute = require("./raam-mg/mg_leads");
 const sellNowRoutes = require("./EpicLuxeBackend/servicesRoutes/sellNowRoutes");
@@ -65,6 +66,7 @@ const hondaLeadsRoute = require("./raam-honda/honda_leads");
 const careersRoute = require("./group/careers");
 const ourTeamRoute = require("./group/ourTeam");
 const mgDigitalLeadsRoute = require("./MGDigitalLeads/routes/leads");
+
 
 // Add specific middleware for leads route to debug
 app.use("/admin/leads", (req, res, next) => {
@@ -128,3 +130,43 @@ app.listen(PORT, () => {
   console.log("   - GET /admin/leads");
   console.log("   - POST /admin/test-leads");
 });
+
+/**
+ * Automated Meta lead sync
+ * --------------------------------------------
+ * The CRM is read-only, so we schedule background fetches
+ * to keep `mg-digital-leads` populated without manual curl calls.
+ *
+ * Configure interval with META_SYNC_INTERVAL_MS (default 15 minutes).
+ * Set META_SYNC_ENABLED=false to disable if needed (e.g. for local dev).
+ */
+const shouldRunMetaSync =
+  (process.env.META_SYNC_ENABLED || "true").toLowerCase() !== "false";
+const metaSyncIntervalMs = Number(process.env.META_SYNC_INTERVAL_MS) || 15 * 60 * 1000;
+
+async function runMetaSync(trigger = "schedule") {
+  try {
+    console.log(`\n🗓️  [Meta Sync] Triggered via ${trigger}`);
+    const summary = await syncMetaLeads();
+    console.log(
+      `✅ [Meta Sync] Completed: ${summary.formsProcessed} forms, ` +
+        `${summary.leadsInserted} inserted, ${summary.leadsSkipped} skipped`
+    );
+  } catch (error) {
+    console.error("❌ [Meta Sync] Failed:", error.message);
+  }
+}
+
+if (shouldRunMetaSync) {
+  // Run once when server starts (after a short delay to ensure env ready)
+  setTimeout(() => runMetaSync("startup"), 5_000);
+
+  // Schedule recurring syncs
+  setInterval(() => runMetaSync("interval"), metaSyncIntervalMs);
+
+  console.log(
+    `🗓️  Meta lead sync enabled (every ${metaSyncIntervalMs / 60000} minutes)`
+  );
+} else {
+  console.log("🛑 Meta lead sync disabled via META_SYNC_ENABLED=false");
+}

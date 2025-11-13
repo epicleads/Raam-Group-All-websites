@@ -1,4 +1,5 @@
 const { insertLead, getAllLeads } = require("../services/leadsService");
+const { syncMetaLeads } = require("../services/metaLeadsService");
 
 function normalizeCarDekhoPayload(payload) {
   return {
@@ -160,9 +161,20 @@ async function getLeads(req, res) {
   }
 }
 
+async function syncMetaLeadsController(req, res) {
+  try {
+    const summary = await syncMetaLeads(req.body || {});
+    res.json(summary);
+  } catch (error) {
+    console.error("Meta sync error:", error.message);
+    res.status(500).json({ error: error.message });
+  }
+}
+
 module.exports = {
   createCarDekhoLead,
   createCarWaleLead,
   createRunoLead,
   getLeads,
+  syncMetaLeadsController,
 };
