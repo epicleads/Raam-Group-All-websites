@@ -56,6 +56,29 @@ function normalizeCarWalePayload(payload) {
   };
 }
 
+function normalizeRunoPayload(payload) {
+  const phone =
+    payload.phone_number ??
+    payload.phone ??
+    payload.mobile ??
+    payload.msisdn ??
+    null;
+
+  return {
+    platform: "Runo AI",
+    name:
+      payload.name ??
+      payload.customer_name ??
+      payload.contact_name ??
+      (phone ? `Runo Lead ${phone}` : "Runo Lead"),
+    phone_number: phone,
+    car_model:
+      payload.car_model ?? payload.vehicle_model ?? payload.model ?? null,
+    lead_url: payload.lead_url ?? payload.page_url ?? payload.url ?? null,
+    payload,
+  };
+}
+
 function validateLeadPayload(res, leadData) {
   const missingFields = [];
 
@@ -100,6 +123,20 @@ async function createCarWaleLead(req, res) {
   }
 }
 
+async function createRunoLead(req, res) {
+  try {
+    const leadData = normalizeRunoPayload(req.body || {});
+
+    if (!validateLeadPayload(res, leadData)) return;
+
+    await insertLead(leadData);
+    res.status(201).json({ message: "Runo lead inserted successfully" });
+  } catch (error) {
+    console.error("Error:", error.message);
+    res.status(500).json({ error: error.message });
+  }
+}
+
 async function getLeads(req, res) {
   try {
     const {
@@ -126,5 +163,6 @@ async function getLeads(req, res) {
 module.exports = {
   createCarDekhoLead,
   createCarWaleLead,
+  createRunoLead,
   getLeads,
 };

@@ -1,59 +1,50 @@
-# MG Digital Leads Webhook Integration Guide
+# MG DIGITAL LEADS WEBHOOK INTEGRATION GUIDE
 
-This document is ready to export as PDF and share with CarDekho / CarWale integration teams.
+This document provides all details required for CarDekho and CarWale to post leads securely into Raam Group’s CRM. Copy the sections into your MS Word template and export as PDF.
 
----
+-----------------------------------------------------------------------
+1. OVERVIEW
+-----------------------------------------------------------------------
+Raam Group aggregates digital leads into a central CRM. CarDekho and CarWale post leads via HTTPS webhooks protected with API keys. Each partner receives a dedicated endpoint and secret.
 
-## 1. Overview
+-----------------------------------------------------------------------
+2. PRODUCTION ENVIRONMENT
+-----------------------------------------------------------------------
+Base URL: https://raam-group-all-websites.onrender.com
+API Version: v1 (implicit in current routes)
+Timeout: 10 seconds
+Accepted Content-Type: application/json; charset=utf-8
 
-Raam Group aggregates digital leads into a unified CRM. CarDekho and CarWale push leads via HTTPS webhooks secured with API keys. Each partner receives a unique endpoint and shared secret.
+-----------------------------------------------------------------------
+3. AUTHENTICATION
+-----------------------------------------------------------------------
+Scheme: Static API key (per partner)
+Header: X-API-Key: <partner-specific-secret>
+Behaviour: Missing key → 401 Unauthorized, invalid key → 403 Forbidden
 
----
+3.1 KEY DISTRIBUTION
+Partner   | Header       | Environment Variable     | Production Value*
+----------|--------------|--------------------------|-----------------------------------------
+CarDekho  | X-API-Key    | LEAD_API_KEY_CARDEKHO    | raam-digital-2025-supersecret-cardekho
+CarWale   | X-API-Key    | LEAD_API_KEY_CARWALE     | raam-digital-2025-supersecret-carwale
 
-## 2. Production Environment
+*Distribute secrets securely (encrypted email or password-protected document). Rotate immediately if compromised.
 
-- **Base URL:** `https://raam-group-all-websites.onrender.com`
-- **API Version:** v1 (implicit in current routes)
-- **Timeout:** 10 seconds
-- **Accepted Content-Type:** `application/json; charset=utf-8`
+Security reminder: Never include API keys in tickets or shared documents without protection.
 
----
+-----------------------------------------------------------------------
+4. ENDPOINTS
+-----------------------------------------------------------------------
+4.1 CARDEKHO LEAD WEBHOOK
+Method: POST
+URL: https://raam-group-all-websites.onrender.com/admin/mg-digital-leads/source/cardekho
+Required Headers:
+  • Content-Type: application/json
+  • X-API-Key: <CarDekho key>
+Required Fields: name, phone_number
+Optional Fields: car_model, lead_url, source, campaign, other attributes (all captured in payload)
 
-## 3. Authentication
-
-- **Scheme:** Static API key provided by Raam Group.
-- **Header:** `X-API-Key: <partner-specific-secret>`
-- Keys are unique per partner; rotate on request.
-- Requests without valid keys return `401 Unauthorized` (missing) or `403 Forbidden` (invalid).
-
-
-### 3.1 Key Distribution
-
-| Partner   | Header Name | Environment Variable              | Production Value*                               |
-|-----------|-------------|-----------------------------------|-------------------------------------------------|
-| CarDekho  | `X-API-Key` | `LEAD_API_KEY_CARDEKHO`           | `raam-digital-2025-supersecret-cardekho`        |
-| CarWale   | `X-API-Key` | `LEAD_API_KEY_CARWALE`            | `raam-digital-2025-supersecret-carwale`         |
-
-\*Distribute the value securely; rotate immediately if leaked.
-
-> **Security Reminder:** Send keys out-of-band (encrypted email or password-protected document). Do not include in ticketing systems.
-
----
-
-## 4. Endpoints
-
-### 4.1 CarDekho Lead Webhook
-
-- **Method:** `POST`
-- **URL:** `https://raam-group-all-websites.onrender.com/admin/mg-digital-leads/source/cardekho`
-- **Required Headers:**
-  - `Content-Type: application/json`
-  - `X-API-Key: <CarDekho key>`
-- **Required Fields:** `name`, `phone_number`
-- **Optional Fields:** `car_model`, `lead_url`, `source`, `campaign`, any other properties (stored in payload)
-
-#### Sample Request
-```json
+Sample Request:
 {
   "name": "Ravi Kumar",
   "phone_number": "9876543210",
@@ -62,36 +53,28 @@ Raam Group aggregates digital leads into a unified CRM. CarDekho and CarWale pus
   "campaign": "EV Awareness Q4",
   "utm_source": "cardekho_ads"
 }
-```
 
-#### Success Response
-```json
+Success Response (HTTP 201):
 {
   "message": "CarDekho lead inserted successfully"
 }
-```
-- **HTTP Status:** `201 Created`
 
-#### Error Responses
-| Status | Example Body | Explanation |
-|--------|--------------|-------------|
-| 400 | `{"error":"Missing required fields: name"}` | Required fields empty or missing |
-| 401 | `{"error":"Missing API key"}` | Header absent |
-| 403 | `{"error":"Invalid API key"}` | Key mismatch |
-| 500 | `{"error":"Internal server error"}` | Unexpected server issue |
+Error Responses:
+400 Bad Request – {"error":"Missing required fields: name"}
+401 Unauthorized – {"error":"Missing API key"}
+403 Forbidden – {"error":"Invalid API key"}
+500 Internal Server Error – {"error":"Internal server error"}
 
-### 4.2 CarWale Lead Webhook
+4.2 CARWALE LEAD WEBHOOK
+Method: POST
+URL: https://raam-group-all-websites.onrender.com/admin/mg-digital-leads/source/carwale
+Required Headers:
+  • Content-Type: application/json
+  • X-API-Key: <CarWale key>
+Required Fields: customer_name (or name), mobile (or phone_number)
+Optional Fields: vehicle_model, page_url, campaign, additional fields (captured in payload)
 
-- **Method:** `POST`
-- **URL:** `https://raam-group-all-websites.onrender.com/admin/mg-digital-leads/source/carwale`
-- **Required Headers:**
-  - `Content-Type: application/json`
-  - `X-API-Key: <CarWale key>`
-- **Required Fields:** `customer_name` or `name`, `mobile` or `phone_number`
-- **Optional Fields:** `vehicle_model`, `page_url`, `campaign`, additional fields captured in payload.
-
-#### Sample Request
-```json
+Sample Request:
 {
   "customer_name": "Sunita Rao",
   "mobile": "9123456780",
@@ -99,72 +82,61 @@ Raam Group aggregates digital leads into a unified CRM. CarDekho and CarWale pus
   "page_url": "https://carwale.com/lead/456",
   "campaign": "Creta Test Drive"
 }
-```
 
-#### Success Response
-```json
+Success Response (HTTP 201):
 {
   "message": "CarWale lead inserted successfully"
 }
-```
-- **HTTP Status:** `201 Created`
 
-#### Error Responses
-Same as CarDekho endpoint.
+Error Responses: identical to CarDekho endpoint.
 
----
+-----------------------------------------------------------------------
+5. FIELD MAPPING & VALIDATION
+-----------------------------------------------------------------------
+Internal Column | CarDekho Fields                        | CarWale Fields                         | Required
+----------------|----------------------------------------|----------------------------------------|---------
+platform        | Hardcoded “CarDekho”                   | Hardcoded “CarWale”                    | Yes
+name            | name, customer_name, contact_name      | customer_name, name, contact_name      | Yes
+phone_number    | phone_number, mobile, phone            | mobile, phone_number, phone            | Yes
+car_model       | car_model, vehicle_model, model        | vehicle_model, car_model, model        | No
+lead_url        | lead_url, page_url, lead_detail_url    | page_url, lead_url, url                | No
+payload         | Entire JSON body                       | Entire JSON body                       | Yes (auto)
 
-## 5. Field Mapping & Validation
+- Unknown fields are preserved in payload for audit.
+- Missing required fields result in HTTP 400.
 
-| Internal Column | CarDekho Field(s)                         | CarWale Field(s)                          | Required |
-|-----------------|-------------------------------------------|-------------------------------------------|----------|
-| `platform`      | Hardcoded to `"CarDekho"`                 | Hardcoded to `"CarWale"`                  | ✔ (auto) |
-| `name`          | `name`, `customer_name`, `contact_name`   | `customer_name`, `name`, `contact_name`   | ✔        |
-| `phone_number`  | `phone_number`, `mobile`, `phone`         | `mobile`, `phone_number`, `phone`         | ✔        |
-| `car_model`     | `car_model`, `vehicle_model`, `model`     | `vehicle_model`, `car_model`, `model`     | ✖        |
-| `lead_url`      | `lead_url`, `page_url`, `lead_detail_url` | `page_url`, `lead_url`, `url`             | ✖        |
-| `payload`       | Entire JSON body                          | Entire JSON body                          | ✔ (auto) |
+-----------------------------------------------------------------------
+6. RATE LIMITS & RELIABILITY
+-----------------------------------------------------------------------
+Soft limit: 120 requests per minute per partner (contact us if you expect higher bursts).
+Retries: Please implement exponential backoff on HTTP 5xx responses.
+Idempotency: Duplicate payloads will create duplicate leads (deduplication roadmap item).
 
-- Unknown fields are retained inside `payload` for audit.
-- Missing required fields trigger HTTP 400.
+-----------------------------------------------------------------------
+7. MONITORING & SUPPORT
+-----------------------------------------------------------------------
+Logging: All requests log timestamp, partner, status code, and validation status.
+Alerting: Elevated 5xx error rates trigger on-call alerts.
+Support Contact: support@raamgroup.in | +91-XXXXXXXXXX
+Maintenance Window: Sundays 01:00–02:00 IST (advance notice provided).
 
----
+-----------------------------------------------------------------------
+8. SECURITY CHECKLIST
+-----------------------------------------------------------------------
+[ ] HTTPS only (enforced by Render)
+[ ] Validate X-API-Key on every request
+[ ] Store API keys in environment variables (LEAD_API_KEY_CARDEKHO / LEAD_API_KEY_CARWALE)
+[ ] Rotate keys periodically or upon incident
+[ ] Monitor access logs for anomalies
+[ ] Optional: provide separate staging keys if required
 
-## 6. Rate Limits & Reliability
+-----------------------------------------------------------------------
+9. CHANGE MANAGEMENT
+-----------------------------------------------------------------------
+Versioning: Breaking changes roll out on new route (e.g., /admin/mg-digital-leads/v2/...) with prior notice.
+Communications: Integration partners receive email notices at least 7 days before schema changes.
+Primary Contact: integration@raamgroup.in
 
-- **Soft limit:** 120 requests/minute per partner. Contact support if bursts exceed this.
-- **Retries:** Please retry on 5xx responses with exponential backoff.
-- **Idempotency:** If duplicate leads are sent, CRM stores duplicates unless identical `platform` and `phone_number` already exist within same minute (future enhancement).
-
----
-
-## 7. Monitoring & Support
-
-- **Logging:** All requests log timestamp, partner, status code. Invalid attempts are flagged.
-- **Alerting:** 5xx rates trigger alerts to Raam Group team.
-- **Support Contact:** `support@raamgroup.in` | +91-XXXXXXXXXX
-- **Maintenance Window:** Sundays 01:00–02:00 IST (communication sent beforehand).
-
----
-
-## 8. Security Checklist
-
-- [ ] Serve endpoints via HTTPS only.
-- [ ] Validate `X-API-Key` per request.
-- [ ] Rotate keys on schedule or incident.
-- [ ] Store keys in environment variables (`CARDEKHO_API_KEY`, `CARWALE_API_KEY`).
-- [ ] Monitor access logs for anomalies.
-- [ ] Provide separate keys for staging environments if required.
-
----
-
-## 9. Change Management
-
-- **Versioning:** Endpoints are stable; any breaking change results in new path `/v2/...` with prior notice.
-- **Communications:** Partners notified via email at least 7 days before schema changes.
-- **Contact:** Integration manager – `integration@raamgroup.in`.
-
----
-
-*End of document — exportable to PDF for distribution.*
-
+-----------------------------------------------------------------------
+END OF DOCUMENT
+-----------------------------------------------------------------------

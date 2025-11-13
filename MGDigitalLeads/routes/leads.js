@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   createCarDekhoLead,
   createCarWaleLead,
+  createRunoLead,
   getLeads,
 } = require("../controllers/leadsController");
 const { requireSourceApiKey } = require("../middleware/apiKeyAuth");
@@ -17,6 +18,11 @@ router.post(
   "/source/carwale",
   requireSourceApiKey("carwale"),
   createCarWaleLead
+);
+router.post(
+  "/source/runo",
+  requireSourceApiKey("runo"),
+  createRunoLead
 );
 
 // GET all leads (for dashboard)
