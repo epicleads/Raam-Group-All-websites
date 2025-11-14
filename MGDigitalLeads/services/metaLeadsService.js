@@ -303,8 +303,11 @@ async function syncMetaLeads(options = {}) {
   ).toISOString();
   const overrideSince = process.env.META_SYNC_SINCE_OVERRIDE;
 
-  const effectiveSince =
-    options.since || overrideSince || lastSyncedAt || monthStartIso;
+  let effectiveSince = options.since || lastSyncedAt || monthStartIso;
+
+  if (!lastSyncedAt && overrideSince) {
+    effectiveSince = overrideSince;
+  }
 
   let resolvedFormIds = configuredFormIds;
   let formMetadata = [];
