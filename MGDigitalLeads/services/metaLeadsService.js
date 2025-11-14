@@ -6,6 +6,11 @@ const META_GRAPH_VERSION = process.env.META_GRAPH_VERSION || "v20.0";
 const META_API_BASE = `https://graph.facebook.com/${META_GRAPH_VERSION}`;
 const AUTO_SENTINEL = "AUTO";
 const META_SYNC_STATE_TABLE = "meta_sync_state";
+const META_MIN_CREATED_AT =
+  process.env.META_MIN_CREATED_AT ||
+  process.env.META_SYNC_SINCE_OVERRIDE ||
+  "2025-11-01T00:00:00Z";
+const MIN_ACCEPTED_DATE = new Date(META_MIN_CREATED_AT);
 
 async function getLastSyncedAt() {
   const { data, error } = await supabase
@@ -255,12 +260,21 @@ function normalizeMetaLead(rawLead, formMeta) {
     ? `https://www.facebook.com/ads/leadgen/${rawLead.id}`
     : null;
 
+  let metaCreatedAt = null;
+  if (rawLead.created_time) {
+    const created = new Date(rawLead.created_time);
+    if (!Number.isNaN(created.getTime())) {
+      metaCreatedAt = created.toISOString();
+    }
+  }
+
   return {
     platform: "Meta",
     name,
     phone_number: phone,
     car_model: carModel,
     lead_url: leadUrl,
+    meta_created_at: metaCreatedAt,
     payload: {
       id: rawLead.id,
       created_time: rawLead.created_time,
@@ -360,6 +374,20 @@ async function syncMetaLeads(options = {}) {
 
     for (const lead of leads) {
       const normalized = normalizeMetaLead(lead, formMeta);
+
+      if (
+        MIN_ACCEPTED_DATE &&
+        normalized.meta_created_at &&
+        new Date(normalized.meta_created_at) < MIN_ACCEPTED_DATE
+      ) {
+        syncSummary.leadsSkipped += 1;
+        syncSummary.details.push({
+          formId,
+          leadId: lead.id,
+          reason: "Lead before minimum accepted date",
+        });
+        continue;
+      }
 
       if (!normalized.phone_number) {
         syncSummary.leadsSkipped += 1;
