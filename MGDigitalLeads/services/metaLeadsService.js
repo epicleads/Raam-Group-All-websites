@@ -231,6 +231,13 @@ async function syncMetaLeads(options = {}) {
     details: [],
   };
 
+  const now = new Date();
+  const monthStartIso = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)
+  ).toISOString();
+
+  const effectiveSince = options.since || monthStartIso;
+
   let resolvedFormIds = configuredFormIds;
   let formMetadata = [];
 
@@ -269,7 +276,7 @@ async function syncMetaLeads(options = {}) {
   for (const formMeta of formMetadata) {
     const formId = formMeta.id;
     const leads = await fetchLeadsForForm(formId, accessToken, {
-      since: options.since,
+      since: effectiveSince,
       until: options.until,
       limit: options.limit,
     });
