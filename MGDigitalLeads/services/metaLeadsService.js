@@ -309,6 +309,8 @@ async function syncMetaLeads(options = {}) {
     effectiveSince = overrideSince;
   }
 
+  console.log("Filtering from:", effectiveSince);
+
   let resolvedFormIds = configuredFormIds;
   let formMetadata = [];
 
