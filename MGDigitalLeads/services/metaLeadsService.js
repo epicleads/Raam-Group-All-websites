@@ -1,39 +1,9 @@
 const axios = require("axios");
-const supabase = require("../supabaseClient");
 const { insertLead, leadExistsByExternalId } = require("./leadsService");
 
 const META_GRAPH_VERSION = process.env.META_GRAPH_VERSION || "v20.0";
 const META_API_BASE = `https://graph.facebook.com/${META_GRAPH_VERSION}`;
 const AUTO_SENTINEL = "AUTO";
-const META_SYNC_STATE_TABLE = "meta_sync_state";
-
-async function getLastSyncedAt() {
-  const { data, error } = await supabase
-    .from(META_SYNC_STATE_TABLE)
-    .select("last_synced_at")
-    .eq("id", true)
-    .maybeSingle();
-
-  if (error && error.code !== "PGRST116") {
-    throw error;
-  }
-
-  return data?.last_synced_at || null;
-}
-
-async function setLastSyncedAt(timestamp) {
-  if (!timestamp) return;
-
-  const { error } = await supabase.from(META_SYNC_STATE_TABLE).upsert(
-    {
-      id: true,
-      last_synced_at: timestamp,
-    },
-    { onConflict: "id" }
-  );
-
-  if (error) throw error;
-}
 const FORM_IDS = [
   "1911631042761097",
   "1177214030405317",
@@ -252,14 +222,12 @@ async function syncMetaLeads(options = {}) {
     options.formIds,
     process.env.META_FORM_IDS_DEFAULT
   );
-  const lastSyncedAt = await getLastSyncedAt();
 
   const syncSummary = {
     formsProcessed: 0,
     leadsChecked: 0,
     leadsInserted: 0,
     leadsSkipped: 0,
-    autoDiscoveredForms: 0,
     details: [],
   };
 
@@ -269,8 +237,7 @@ async function syncMetaLeads(options = {}) {
   ).toISOString();
   const overrideSince = process.env.META_SYNC_SINCE_OVERRIDE;
 
-  const effectiveSince =
-    options.since || overrideSince || lastSyncedAt || monthStartIso;
+  const effectiveSince = options.since || overrideSince || monthStartIso;
 
   let resolvedFormIds = configuredFormIds;
   let formMetadata = [];
@@ -307,8 +274,6 @@ async function syncMetaLeads(options = {}) {
 
   syncSummary.formsProcessed = resolvedFormIds.length;
 
-  let latestLeadTime = lastSyncedAt ? new Date(lastSyncedAt) : null;
-
   for (const formMeta of formMetadata) {
     const formId = formMeta.id;
     const leads = await fetchLeadsForForm(formId, accessToken, {
@@ -344,26 +309,10 @@ async function syncMetaLeads(options = {}) {
 
       await insertLead(normalized);
       syncSummary.leadsInserted += 1;
-
-      if (lead.created_time) {
-        const createdAt = new Date(lead.created_time);
-        if (
-          !Number.isNaN(createdAt.getTime()) &&
-          (!latestLeadTime || createdAt > latestLeadTime)
-        ) {
-          latestLeadTime = createdAt;
-        }
-      }
     }
   }
 
   syncSummary.message = "Meta lead sync completed.";
-  if (latestLeadTime && (!lastSyncedAt || latestLeadTime > new Date(lastSyncedAt))) {
-    const latestIso = latestLeadTime.toISOString();
-    await setLastSyncedAt(latestIso);
-    syncSummary.lastSyncedAt = latestIso;
-  }
-
   return syncSummary;
 }
 
