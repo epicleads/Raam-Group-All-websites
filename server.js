@@ -140,8 +140,7 @@ app.listen(PORT, () => {
  * Configure interval with META_SYNC_INTERVAL_MS (default 15 minutes).
  * Set META_SYNC_ENABLED=false to disable if needed (e.g. for local dev).
  */
-const shouldRunMetaSync =
-  (process.env.META_SYNC_ENABLED || "true").toLowerCase() !== "false";
+const shouldRunMetaSync = false;
 const metaSyncIntervalMs = Number(process.env.META_SYNC_INTERVAL_MS) || 15 * 60 * 1000;
 
 async function runMetaSync(trigger = "schedule") {
@@ -158,15 +157,11 @@ async function runMetaSync(trigger = "schedule") {
 }
 
 if (shouldRunMetaSync) {
-  // Run once when server starts (after a short delay to ensure env ready)
   setTimeout(() => runMetaSync("startup"), 5_000);
-
-  // Schedule recurring syncs
   setInterval(() => runMetaSync("interval"), metaSyncIntervalMs);
-
   console.log(
     `🗓️  Meta lead sync enabled (every ${metaSyncIntervalMs / 60000} minutes)`
   );
 } else {
-  console.log("🛑 Meta lead sync disabled via META_SYNC_ENABLED=false");
+  console.log("🛑 Meta lead sync disabled (hardcoded)");
 }
