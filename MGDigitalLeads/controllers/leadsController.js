@@ -146,16 +146,36 @@ async function getLeads(req, res) {
       fromDate,
       toDate,
       search,
+      page,
+      limit,
     } = req.query;
 
-    const leads = await getAllLeads({
+    const pageSize = Math.min(
+      500,
+      Math.max(1, parseInt(limit, 10) || 100)
+    );
+    const currentPage = Math.max(1, parseInt(page, 10) || 1);
+    const offset = (currentPage - 1) * pageSize;
+
+    const { data, count } = await getAllLeads({
       platform,
       status,
       fromDate,
       toDate,
       search,
+      limit: pageSize,
+      offset,
     });
-    res.json(leads);
+
+    const totalPages = Math.max(1, Math.ceil((count || 0) / pageSize));
+
+    res.json({
+      leads: data,
+      total: count,
+      page: currentPage,
+      pageSize,
+      totalPages,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

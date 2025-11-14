@@ -23,12 +23,15 @@ async function getAllLeads(filters = {}) {
     fromDate,
     toDate,
     search,
+    limit = 100,
+    offset = 0,
   } = filters;
 
   let query = supabase
     .from("mg-digital-leads")
-    .select("*")
-    .order("created_at", { ascending: false });
+    .select("*", { count: "exact" })
+    .order("created_at", { ascending: false })
+    .range(offset, offset + limit - 1);
 
   if (platform) {
     query = query.eq("platform", platform);
@@ -59,10 +62,10 @@ async function getAllLeads(filters = {}) {
     );
   }
 
-  const { data, error } = await query;
+  const { data, error, count } = await query;
 
   if (error) throw error;
-  return data;
+  return { data: data || [], count: count ?? 0 };
 }
 
 async function leadExistsByExternalId(platform, externalId) {
