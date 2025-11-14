@@ -235,8 +235,9 @@ async function syncMetaLeads(options = {}) {
   const monthStartIso = new Date(
     Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)
   ).toISOString();
+  const overrideSince = process.env.META_SYNC_SINCE_OVERRIDE;
 
-  const effectiveSince = options.since || monthStartIso;
+  const effectiveSince = options.since || overrideSince || monthStartIso;
 
   let resolvedFormIds = configuredFormIds;
   let formMetadata = [];
