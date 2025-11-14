@@ -139,15 +139,49 @@ async function fetchLeadForms(pageId, accessToken) {
   }
 }
 
+function buildFilteringParam({ since, until }) {
+  const filters = [];
+
+  if (since) {
+    const sinceDate = new Date(since);
+    if (!Number.isNaN(sinceDate.getTime())) {
+      filters.push({
+        field: "time_created",
+        operator: "GREATER_THAN",
+        value: Math.floor(sinceDate.getTime() / 1000),
+      });
+    }
+  }
+
+  if (until) {
+    const untilDate = new Date(until);
+    if (!Number.isNaN(untilDate.getTime())) {
+      filters.push({
+        field: "time_created",
+        operator: "LESS_THAN",
+        value: Math.floor(untilDate.getTime() / 1000),
+      });
+    }
+  }
+
+  return filters.length ? JSON.stringify(filters) : undefined;
+}
+
 async function fetchLeadsForForm(formId, accessToken, params = {}) {
   let results = [];
   let nextUrl = `${META_API_BASE}/${formId}/leads`;
+  const filtering = buildFilteringParam({
+    since: params.since,
+    until: params.until,
+  });
   let query = {
     access_token: accessToken,
     limit: params.limit || 100,
-    since: params.since,
-    until: params.until,
   };
+
+  if (filtering) {
+    query.filtering = filtering;
+  }
 
   while (nextUrl) {
     let data;
