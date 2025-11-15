@@ -65,14 +65,15 @@ async function getAllLeads(filters = {}) {
   return data;
 }
 
-async function leadExistsByExternalId(platform, externalId) {
+async function leadExistsByExternalId(platform, externalId, options = {}) {
   if (!externalId) return false;
 
+  const column = options.column || "id";
   const { data, error } = await supabase
     .from("mg-digital-leads")
     .select("id")
     .eq("platform", platform)
-    .eq("payload->>id", externalId)
+    .eq(`payload->>${column}`, externalId.toString())
     .limit(1)
     .maybeSingle();
 

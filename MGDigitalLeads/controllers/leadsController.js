@@ -1,4 +1,8 @@
-const { insertLead, getAllLeads } = require("../services/leadsService");
+const {
+  insertLead,
+  getAllLeads,
+  leadExistsByExternalId,
+} = require("../services/leadsService");
 const { syncMetaLeads } = require("../services/metaLeadsService");
 
 function normalizeCarDekhoPayload(payload) {
@@ -59,23 +63,16 @@ function normalizeCarWalePayload(payload) {
 
 function normalizeKnowlarityPayload(payload) {
   const phone =
-    payload.phone_number ??
-    payload.phone ??
-    payload.mobile ??
-    payload.msisdn ??
+    payload.customer_number ??
+    payload.caller_id ??
     null;
 
   return {
     platform: "Knowlarity",
-    name:
-      payload.name ??
-      payload.customer_name ??
-      payload.contact_name ??
-      (phone ? `Knowlarity Lead ${phone}` : "Knowlarity Lead"),
+    name: phone ? `Knowlarity Lead ${phone}` : "Knowlarity Lead",
     phone_number: phone,
-    car_model:
-      payload.car_model ?? payload.vehicle_model ?? payload.model ?? null,
-    lead_url: payload.lead_url ?? payload.page_url ?? payload.url ?? null,
+    car_model: null,
+    lead_url: null,
     payload,
   };
 }
@@ -126,7 +123,21 @@ async function createCarWaleLead(req, res) {
 
 async function createKnowlarityLead(req, res) {
   try {
-    const leadData = normalizeKnowlarityPayload(req.body || {});
+    const payload = req.body || {};
+    const externalId = payload.uuid;
+
+    if (externalId) {
+      const exists = await leadExistsByExternalId(
+        "Knowlarity",
+        externalId.toString(),
+        { column: "uuid" }
+      );
+      if (exists) {
+        return res.status(200).json({ message: "Duplicate ignored" });
+      }
+    }
+
+    const leadData = normalizeKnowlarityPayload(payload);
 
     if (!validateLeadPayload(res, leadData)) return;
 
