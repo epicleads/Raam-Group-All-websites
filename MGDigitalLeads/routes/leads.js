@@ -20,11 +20,7 @@ router.post(
   requireSourceApiKey("carwale"),
   createCarWaleLead
 );
-router.post(
-  "/source/knowlarity",
-  requireSourceApiKey("knowlarity"),
-  createKnowlarityLead
-);
+router.post("/source/knowlarity", createKnowlarityLead);
 router.post("/source/meta/sync", syncMetaLeadsController);
 
 // GET all leads (for dashboard)

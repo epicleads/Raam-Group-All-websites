@@ -14,11 +14,9 @@ Timeout: 10 seconds
 Content-Type: application/json; charset=utf-8
 
 -----------------------------------------------------------------------
-3. AUTHENTICATION
+3. SECURITY
 -----------------------------------------------------------------------
-Header: X-API-Key: raam-digital-2025-supersecret-knowlarity
-Behaviour: Missing key → 401 Unauthorized, invalid key → 403 Forbidden.
-Store the key securely; notify Raam Group immediately if you believe it has been exposed.
+Knowlarity’s webhook does not need custom headers or API keys. Calls are accepted as long as they hit the production endpoint over HTTPS. (Raam Group monitors activity server-side to prevent abuse.)
 
 -----------------------------------------------------------------------
 4. REQUEST FORMAT
@@ -53,8 +51,6 @@ Success (HTTP 201)
 
 Error Responses
 400 Bad Request – missing phone number or invalid payload (example: {"error":"Missing required fields: phone_number"})
-401 Unauthorized – API key header not supplied
-403 Forbidden – API key invalid
 500 Internal Server Error – unexpected server issue; retry with backoff
 
 -----------------------------------------------------------------------
@@ -83,7 +79,6 @@ APPENDIX – TROUBLESHOOTING CHECKLIST
 -----------------------------------------------------------------------
 [ ] Confirm HTTPS POST to the Knowlarity endpoint URL.
 [ ] Set “Content-Type: application/json”.
-[ ] Include “X-API-Key: raam-digital-2025-supersecret-knowlarity”.
 [ ] Ensure phone number field is present and non-empty.
 [ ] Log Raam Group response body/status for operational visibility.
 
