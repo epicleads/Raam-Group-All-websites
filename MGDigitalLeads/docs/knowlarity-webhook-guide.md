@@ -1,14 +1,14 @@
-# MG DIGITAL LEADS – RUNO AI WEBHOOK GUIDE
+# MG DIGITAL LEADS – KNOWLARITY WEBHOOK GUIDE
 
 -----------------------------------------------------------------------
 1. OVERVIEW
 -----------------------------------------------------------------------
-This document outlines how Runo AI should post call leads to Raam Group’s CRM via secure HTTPS webhook. Copy into a Word template or export directly to share with the Runo team.
+This document outlines how Knowlarity should post call leads to Raam Group’s CRM via secure HTTPS webhook. Copy into a Word template or export directly to share with the Knowlarity team.
 
 -----------------------------------------------------------------------
 2. PRODUCTION ACCESS
 -----------------------------------------------------------------------
-Endpoint (POST): https://raam-group-all-websites.onrender.com/admin/mg-digital-leads/source/runo
+Endpoint (POST): https://raam-group-all-websites.onrender.com/admin/mg-digital-leads/source/knowlarity
 Transport: HTTPS (TLS 1.2+)
 Timeout: 10 seconds
 Content-Type: application/json; charset=utf-8
@@ -16,7 +16,7 @@ Content-Type: application/json; charset=utf-8
 -----------------------------------------------------------------------
 3. AUTHENTICATION
 -----------------------------------------------------------------------
-Header: X-API-Key: raam-digital-2025-supersecret-runo
+Header: X-API-Key: raam-digital-2025-supersecret-knowlarity
 Behaviour: Missing key → 401 Unauthorized, invalid key → 403 Forbidden.
 Store the key securely; notify Raam Group immediately if you believe it has been exposed.
 
@@ -40,7 +40,7 @@ Sample JSON Body (with extra context)
 {
   "phone_number": "9876543210",
   "name": "Lead from IVR",
-  "campaign": "Runo Inbound Nov-2025"
+  "campaign": "Knowlarity Inbound Nov-2025"
 }
 
 -----------------------------------------------------------------------
@@ -48,7 +48,7 @@ Sample JSON Body (with extra context)
 -----------------------------------------------------------------------
 Success (HTTP 201)
 {
-  "message": "Runo lead inserted successfully"
+  "message": "Knowlarity lead inserted successfully"
 }
 
 Error Responses
@@ -60,8 +60,8 @@ Error Responses
 -----------------------------------------------------------------------
 6. DATA HANDLING
 -----------------------------------------------------------------------
-- Leads insert into public."mg-digital-leads" with platform fixed to “Runo AI”.
-- Name defaults to “Runo Lead <phone>” if no name arrives.
+- Leads insert into public."mg-digital-leads" with platform fixed to “Knowlarity”.
+- Name defaults to “Knowlarity Lead <phone>” if no name arrives.
 - Complete payload JSON is archived for audit purposes.
 - Duplicate submissions are allowed (deduplication planned for future).
 
@@ -81,13 +81,14 @@ Maintenance window: Sundays 01:00–02:00 IST (notification sent prior to any pl
 -----------------------------------------------------------------------
 APPENDIX – TROUBLESHOOTING CHECKLIST
 -----------------------------------------------------------------------
-[ ] Confirm HTTPS POST to the Runo endpoint URL.
+[ ] Confirm HTTPS POST to the Knowlarity endpoint URL.
 [ ] Set “Content-Type: application/json”.
-[ ] Include “X-API-Key: raam-digital-2025-supersecret-runo”.
+[ ] Include “X-API-Key: raam-digital-2025-supersecret-knowlarity”.
 [ ] Ensure phone number field is present and non-empty.
 [ ] Log Raam Group response body/status for operational visibility.
 
 -----------------------------------------------------------------------
 END OF DOCUMENT
 -----------------------------------------------------------------------
+
 

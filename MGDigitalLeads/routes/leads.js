@@ -3,7 +3,7 @@ const router = express.Router();
 const {
   createCarDekhoLead,
   createCarWaleLead,
-  createRunoLead,
+  createKnowlarityLead,
   getLeads,
   syncMetaLeadsController,
 } = require("../controllers/leadsController");
@@ -21,9 +21,9 @@ router.post(
   createCarWaleLead
 );
 router.post(
-  "/source/runo",
-  requireSourceApiKey("runo"),
-  createRunoLead
+  "/source/knowlarity",
+  requireSourceApiKey("knowlarity"),
+  createKnowlarityLead
 );
 router.post("/source/meta/sync", syncMetaLeadsController);
 

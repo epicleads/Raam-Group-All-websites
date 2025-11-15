@@ -57,7 +57,7 @@ function normalizeCarWalePayload(payload) {
   };
 }
 
-function normalizeRunoPayload(payload) {
+function normalizeKnowlarityPayload(payload) {
   const phone =
     payload.phone_number ??
     payload.phone ??
@@ -66,12 +66,12 @@ function normalizeRunoPayload(payload) {
     null;
 
   return {
-    platform: "Runo AI",
+    platform: "Knowlarity",
     name:
       payload.name ??
       payload.customer_name ??
       payload.contact_name ??
-      (phone ? `Runo Lead ${phone}` : "Runo Lead"),
+      (phone ? `Knowlarity Lead ${phone}` : "Knowlarity Lead"),
     phone_number: phone,
     car_model:
       payload.car_model ?? payload.vehicle_model ?? payload.model ?? null,
@@ -124,14 +124,16 @@ async function createCarWaleLead(req, res) {
   }
 }
 
-async function createRunoLead(req, res) {
+async function createKnowlarityLead(req, res) {
   try {
-    const leadData = normalizeRunoPayload(req.body || {});
+    const leadData = normalizeKnowlarityPayload(req.body || {});
 
     if (!validateLeadPayload(res, leadData)) return;
 
     await insertLead(leadData);
-    res.status(201).json({ message: "Runo lead inserted successfully" });
+    res
+      .status(201)
+      .json({ message: "Knowlarity lead inserted successfully" });
   } catch (error) {
     console.error("Error:", error.message);
     res.status(500).json({ error: error.message });
@@ -174,7 +176,7 @@ async function syncMetaLeadsController(req, res) {
 module.exports = {
   createCarDekhoLead,
   createCarWaleLead,
-  createRunoLead,
+  createKnowlarityLead,
   getLeads,
   syncMetaLeadsController,
 };
