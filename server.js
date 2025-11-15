@@ -57,6 +57,9 @@ const leadsRoute = require("./EpicLuxeBackend/Leads");
 const adsRoute = require("./raam-ather/ads");
 const landingPageBanner = require("./EpicToyota/LandingPageBanner");
 const { syncMetaLeads } = require("./MGDigitalLeads/services/metaLeadsService");
+const {
+  syncKnowlarityCalls,
+} = require("./MGDigitalLeads/services/knowlaritySyncService");
 const mgRouter = require("./raam-mg/router");
 const mgLeadsRoute = require("./raam-mg/mg_leads");
 const sellNowRoutes = require("./EpicLuxeBackend/servicesRoutes/sellNowRoutes");
@@ -164,4 +167,39 @@ if (shouldRunMetaSync) {
   );
 } else {
   console.log("🛑 Meta lead sync disabled (hardcoded)");
+}
+
+/**
+ * Automated Knowlarity call sync
+ * --------------------------------------------
+ * Polls Knowlarity's call log API and mirrors the results into
+ * `mg-digital-leads`, deduplicating on UUID so repeated logs
+ * don't flood the dashboard.
+ */
+const knowlaritySyncEnabled =
+  process.env.KNOWLARITY_SYNC_ENABLED !== "false";
+const knowlaritySyncIntervalMs =
+  Number(process.env.KNOWLARITY_SYNC_INTERVAL_MS) || 60 * 1000;
+
+async function runKnowlaritySync(trigger = "schedule") {
+  try {
+    console.log(`\n🗓️  [Knowlarity Sync] Triggered via ${trigger}`);
+    const summary = await syncKnowlarityCalls();
+    console.log(
+      `✅ [Knowlarity Sync] ${summary.inserted} inserted, ${summary.skipped} skipped, ` +
+        `${summary.checked} checked between ${summary.startTime} - ${summary.endTime}`
+    );
+  } catch (error) {
+    console.error("❌ [Knowlarity Sync] Failed:", error.message);
+  }
+}
+
+if (knowlaritySyncEnabled) {
+  setTimeout(() => runKnowlaritySync("startup"), 10_000);
+  setInterval(() => runKnowlaritySync("interval"), knowlaritySyncIntervalMs);
+  console.log(
+    `🗓️  Knowlarity sync enabled (every ${knowlaritySyncIntervalMs / 1000} seconds)`
+  );
+} else {
+  console.log("🛑 Knowlarity sync disabled (set KNOWLARITY_SYNC_ENABLED=false)");
 }

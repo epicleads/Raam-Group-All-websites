@@ -6,6 +6,7 @@ const {
   createKnowlarityLead,
   getLeads,
   syncMetaLeadsController,
+  syncKnowlarityLeadsController,
 } = require("../controllers/leadsController");
 const { requireSourceApiKey } = require("../middleware/apiKeyAuth");
 
@@ -24,6 +25,11 @@ router.post(
   "/source/knowlarity",
   requireSourceApiKey("knowlarity"),
   createKnowlarityLead
+);
+router.post(
+  "/source/knowlarity/sync",
+  requireSourceApiKey("knowlarity"),
+  syncKnowlarityLeadsController
 );
 router.post("/source/meta/sync", syncMetaLeadsController);
 

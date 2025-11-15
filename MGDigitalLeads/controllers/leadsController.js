@@ -4,6 +4,7 @@ const {
   leadExistsByExternalId,
 } = require("../services/leadsService");
 const { syncMetaLeads } = require("../services/metaLeadsService");
+const { syncKnowlarityCalls } = require("../services/knowlaritySyncService");
 
 function normalizeCarDekhoPayload(payload) {
   return {
@@ -184,10 +185,21 @@ async function syncMetaLeadsController(req, res) {
   }
 }
 
+async function syncKnowlarityLeadsController(req, res) {
+  try {
+    const summary = await syncKnowlarityCalls(req.body || {});
+    res.json(summary);
+  } catch (error) {
+    console.error("Knowlarity sync error:", error.message);
+    res.status(500).json({ error: error.message });
+  }
+}
+
 module.exports = {
   createCarDekhoLead,
   createCarWaleLead,
   createKnowlarityLead,
   getLeads,
   syncMetaLeadsController,
+  syncKnowlarityLeadsController,
 };
