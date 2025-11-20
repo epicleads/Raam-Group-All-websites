@@ -20,7 +20,7 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_KEY
 );
 
-const BUCKET = process.env.SUPABASE_BUCKET_ATHER_CAMPAOGNS || 'ather-hero-sliders';
+const BUCKET = process.env.SUPABASE_BUCKET_ATHER_CAMPAIGN || 'ather-hero-sliders';
 const TABLE = 'ather-hero-slider';
 
 function parseBool(value, fallback = false) {
